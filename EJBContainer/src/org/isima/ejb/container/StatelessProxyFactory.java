@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.isima.ejb.annotations.PersistenceContext;
 import org.isima.ejb.annotations.PostActivate;
@@ -24,10 +27,14 @@ import org.isima.ejb.entityManagement.ConcreteEntityManager;
 import org.isima.ejb.entityManagement.EntityManager;
 import org.isima.ejb.exception.AnnotationException;
 import org.isima.ejb.exception.PersistanceException;
+import org.isima.ejb.logging.LoggingConfiguratorFactory;
 import org.isima.ejb.persistenceUnitSchema.Persistence;
 
 public class StatelessProxyFactory implements InvocationHandler{
-	private static final long KILLING_DELAY_SECONDS = 5l;
+	private final Logger logger;
+	private static final Level level = Level.ALL;
+	
+	private static final long KILLING_DELAY_SECONDS = 50l;
 	private static final String STATELESS_READY_STATE = "ready";
 	private static final String STATELESS_KILLED_STATE = "killed";
 	private static final String POST_CONSTRUCT_METHOD = "postconstruct";
@@ -35,9 +42,11 @@ public class StatelessProxyFactory implements InvocationHandler{
 	
 	private static class Killer implements Runnable{
 		StatelessProxyFactory proxy;
+		Logger log;
 		
-		public Killer(StatelessProxyFactory proxy){
+		public Killer(StatelessProxyFactory proxy,Logger logger){
 			this.proxy = proxy;
+			this.log = logger;
 		}
 
 		@Override
@@ -45,9 +54,8 @@ public class StatelessProxyFactory implements InvocationHandler{
 			try{
 				if( (this.proxy.getLastTimeCalled() < (System.currentTimeMillis() - (KILLING_DELAY_SECONDS * 1000l)) ) ){
 						if(this.proxy.getState().equals(STATELESS_READY_STATE)){
+								this.log.info("Stateless getting killed, because unaccessed since "+ ((System.currentTimeMillis() - this.proxy.getLastTimeCalled())/1000l)+" seconds" );
 								this.proxy.setState(STATELESS_KILLED_STATE);
-						}else{
-							System.out.println("Stateless"+proxy.getState());
 						}
 				}
 
@@ -71,40 +79,57 @@ public class StatelessProxyFactory implements InvocationHandler{
 
 	private StatelessProxyFactory(Object obj,Persistence persistenceUnit){
 		this.ejbImplementation = obj;
+		
+		//Setting logs
+		logger = Logger.getLogger(this.ejbImplementation.getClass().getName());
+		LoggingConfiguratorFactory lcf = new LoggingConfiguratorFactory(logger,level);
+		lcf.applySimpleLoggingConfig();
+		lcf.applyXMLLoggingConfig();
+		
 		//Stateless object ready at creation
 		state = STATELESS_READY_STATE;
 		
 		//Setting lastUsedTime
 		lastTimeCalled = System.currentTimeMillis();
 		
-		killer = new Killer(this);
+		killer = new Killer(this,this.logger);
 		
 		methods = new HashMap<>();
 		methodsNames = new HashSet<>();
 		
-		//Gettin PostContruct PrePassivate PostActivate and PreDestroy Methods
+		//Gettin PostContruct and PreDestroy Methods
 		try{
+				logger.info("Stateless getting PostContruct and PreDestroy Methods from class: "+ejbImplementation.getClass().getName());
 				for(Method method :obj.getClass().getDeclaredMethods()){
 					method.setAccessible(true);
-					
-						for(Annotation annotation : method.getAnnotations() ){
+					for(Annotation annotation : method.getAnnotations() ){
 							if(annotation instanceof PrePassivate){
-								throw new AnnotationException("Unexpected annotation : PrePassivate on stateless EJB method");
+								AnnotationException exception = new AnnotationException("Unexpected annotation : PrePassivate on stateless EJB method");
+								logger.severe("Severe Error("+exception.getMessage()+")");
+								throw exception;
 							}else if(annotation instanceof PostActivate){
-								throw new AnnotationException("Unexpected annotation : PostActivate on stateless EJB method");			
+								AnnotationException exception = new AnnotationException("Unexpected annotation : PostActivate on stateless EJB method");
+								logger.severe("Severe Error("+exception.getMessage()+")");
+								throw exception;	
 							}else if(annotation instanceof PostConstruct){
+								logger.fine("Found PostConstruct method in "+ejbImplementation.getClass().getName()+" method name: "+method.getName());
 								methods.put(POST_CONSTRUCT_METHOD, method);		
 								methodsNames.add(method.getName());			
 							}else if(annotation instanceof PreDestroy){
+								logger.fine("Found PreDestroy method in "+ejbImplementation.getClass().getName()+" method name: "+method.getName());
 								methods.put(PRE_DESTROY_METHOD, method);	
 								methodsNames.add(method.getName());				
 							}else if(annotation instanceof Remove){
-								throw new AnnotationException("Unexpected annotation : Remove on stateless EJB method");				
+								AnnotationException exception = new AnnotationException("Unexpected annotation : Remove on stateless EJB method");
+								logger.severe("Severe Error("+exception.getMessage()+")");
+								throw exception;			
 							}
 						}
 				}
+				logger.info("Stateless getting PostContruct and PreDestroy Methods from class: found"+ methodsNames.size());
 				
 				//Getting the EntityManagerField
+				logger.info("Injection of EntityManager instance in Stateless("+ejbImplementation.toString()+")");
 				this.persistence = persistenceUnit;
 				Constructor<?> entityManagerConstructor = Class.forName(ConcreteEntityManager.class.getName()).getConstructor(Persistence.class);
 				for(Field ejbField : obj.getClass().getDeclaredFields()){
@@ -112,11 +137,17 @@ public class StatelessProxyFactory implements InvocationHandler{
 					for(Annotation annotation : ejbField.getAnnotations()){
 						if(annotation instanceof PersistenceContext){
 							if( (ejbField.getType().equals(EntityManager.class)) && this.persistence != null){
-								ejbField.set(obj, entityManagerConstructor.newInstance(this.persistence));
+								ConcreteEntityManager entityManager = (ConcreteEntityManager) entityManagerConstructor.newInstance(this.persistence);
+								logger.info("Injecting instance ("+entityManager.toString()+") of EntityManager in "+ejbImplementation.toString());
+								ejbField.set(obj, entityManager);
 							}else if(this.persistence == null){
-								throw new PersistanceException("Persistence file not found: Couldn't find persistence.exe file in META-INF");
+								PersistanceException e = new PersistanceException("Persistence file not found: Couldn't find persistence.xml file in META-INF");
+								logger.severe("Sever Error("+e.getMessage()+")");
+								throw e;
 							}else{
-								throw new AnnotationException("Unexpected annotation exception: expected "+EntityManager.class.getSimpleName()+" field type but found "+ejbField.getType().getSimpleName());
+								AnnotationException e = new AnnotationException("Unexpected annotation exception: expected "+EntityManager.class.getSimpleName()+" field type but found "+ejbField.getType().getSimpleName());
+								logger.severe("Sever Error("+e.getMessage()+")");
+								throw e;
 							}
 						}
 					}
@@ -124,6 +155,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 				
 				//Invoking POST_CONSTRUCT_METHOD Method
 				if(methods.get(POST_CONSTRUCT_METHOD) != null){
+					logger.info("Invoking Stateless PostConstruct method on EJB("+ejbImplementation.toString()+")");
 					this.invoke(this.getEjbImplementation(), methods.get(POST_CONSTRUCT_METHOD), null);
 				}
 			}catch(AnnotationException exception){
@@ -135,6 +167,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 		
 		
 		//Clocking state changes
+		logger.warning("Scheduling Stateless kill on  EJB("+ejbImplementation.toString()+") @Rate: every "+KILLING_DELAY_SECONDS+" seconds");
 		killScheduler.scheduleAtFixedRate(this.killer,KILLING_DELAY_SECONDS,KILLING_DELAY_SECONDS,TimeUnit.SECONDS);
 	}
 	
@@ -152,9 +185,10 @@ public class StatelessProxyFactory implements InvocationHandler{
 
 	private void setState(String stateToSet) throws Throwable {
 		if(stateToSet.equals(STATELESS_KILLED_STATE)){
-				//System.out.println(STATELESS_KILLED_STATE+" instance: "+this.toString());
+		    logger.info("Changing Stateless state to Killed on EJB("+ejbImplementation.toString()+")");	
 			this.state = STATELESS_KILLED_STATE;
 			if(methods.get(PRE_DESTROY_METHOD)!=null){
+				logger.info("Invoking Stateless PreDestroy method on EJB("+ejbImplementation.toString()+")");
 				methods.get(PRE_DESTROY_METHOD).invoke(this.ejbImplementation, (Object[])null);
 			}
 			this.ejbImplementation = null;
@@ -168,14 +202,17 @@ public class StatelessProxyFactory implements InvocationHandler{
 		boolean isEJBAnnotated = testAnnotatedMethod(method.getName());
 		if(!isEJBAnnotated){
 			//Update lastCalled time
+			logger.finer("Singleton on Called EJB("+ejbImplementation.toString()+")");	
 			lastTimeCalled = System.currentTimeMillis();			
 		}
 		
 		//Change state to active if has been passivated
 		if(this.getState().equals(STATELESS_KILLED_STATE) ){
-			throw new IllegalStateException("LifeCycle Exception: Stateless removed");
+			IllegalStateException ise =  new IllegalStateException("LifeCycle Exception: Stateless removed");
+			logger.severe("Severe Error("+ise.getMessage()+")");
+			throw ise;
 		}
-		
+		logger.finer("Invoking method: "+method.getName()+" on Stateless EJB("+ejbImplementation.toString()+") using args: "+Arrays.toString(args));
 		if(Object.class  == method.getDeclaringClass()) {
 		       String name = method.getName();
 		       if("equals".equals(name)) {
@@ -187,7 +224,9 @@ public class StatelessProxyFactory implements InvocationHandler{
 		               Integer.toHexString(System.identityHashCode(proxy)) +
 		               ", with InvocationHandler " + this;
 		       } else {
-		           throw new IllegalStateException("Invoking method on EJB error: "+String.valueOf(method));
+		    	    IllegalStateException ise =  new IllegalStateException("Invoking method on EJB error: "+String.valueOf(method));
+					logger.severe("Severe Error("+ise.getMessage()+")");
+					throw ise;
 		       }
 		   }
 		
