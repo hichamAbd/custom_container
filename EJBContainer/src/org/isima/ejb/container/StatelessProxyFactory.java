@@ -34,7 +34,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 	private final Logger logger;
 	private static final Level level = Level.ALL;
 	
-	private static final long KILLING_DELAY_SECONDS = 50l;
+	private static final long KILLING_DELAY_SECONDS = 5l;
 	private static final String STATELESS_READY_STATE = "ready";
 	private static final String STATELESS_KILLED_STATE = "killed";
 	private static final String POST_CONSTRUCT_METHOD = "postconstruct";

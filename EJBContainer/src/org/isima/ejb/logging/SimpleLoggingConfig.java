@@ -10,17 +10,11 @@ import java.util.logging.SimpleFormatter;
 public class SimpleLoggingConfig implements LoggingConfigurator{
 	private static final String LOG_FILE_PATH = "log"+File.separator+"txt"+File.separator;
 	
-	public SimpleLoggingConfig(){
-		File level0 = new File("/","log");
-		if(!level0.exists()){level0.mkdir();}
-		File level1 = new File("log","txt");
-		if(!level1.exists()){level0.mkdir();}
-	}
 	@Override
 	public void setup(Logger logger,Level lvl) {
 		try {			
 			//Getting the file handler
-			File f = new File(LOG_FILE_PATH+logger.getName().replace(".", "_")+"logs.txt");
+			File f = new File(LOG_FILE_PATH+logger.getName().replace(".", "_")+".logs.txt");
 			f.createNewFile();
 			FileHandler outputFileHandler = new FileHandler(LOG_FILE_PATH+logger.getName().replace(".", "_")+".logs.txt");
 			
