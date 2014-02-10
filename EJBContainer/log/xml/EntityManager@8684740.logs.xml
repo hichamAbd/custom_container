@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526262</millis>
+  <sequence>97</sequence>
+  <logger>EntityManager@8684740</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>remove</method>
+  <thread>1</thread>
+  <message>Removing Entity(entites.BEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+</record>
+<record>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526263</millis>
+  <sequence>98</sequence>
+  <logger>EntityManager@8684740</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>merge</method>
+  <thread>1</thread>
+  <message>Merging Entity(entites.CEntity@188145f in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+</record>
+</log>

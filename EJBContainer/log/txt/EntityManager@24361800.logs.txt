@@ -1,0 +1,8 @@
+févr. 10, 2014 12:41:57 PM org.isima.ejb.entityManagement.ConcreteEntityManager persist
+INFO: Persiting Entity(entites.CEntity@956f01 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@173bb48
+févr. 10, 2014 12:41:57 PM org.isima.ejb.entityManagement.ConcreteEntityManager find
+INFO: Try to find an Entity(AEntity) using PrimaryKey(1) in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@173bb48
+févr. 10, 2014 12:42:02 PM org.isima.ejb.entityManagement.ConcreteEntityManager persist
+INFO: Persiting Entity(entites.CEntity@956f01 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@173bb48
+févr. 10, 2014 12:42:02 PM org.isima.ejb.entityManagement.ConcreteEntityManager find
+INFO: Try to find an Entity(AEntity) using PrimaryKey(1) in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@173bb48
