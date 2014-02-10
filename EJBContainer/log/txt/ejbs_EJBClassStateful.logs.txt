@@ -1,0 +1,40 @@
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+INFO: Stateful getting PostContruct PrePassivate PostActivate PreDestroy and remove Methods from class: ejbs.EJBClassStateful
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+FINE: Found Remove method in ejbs.EJBClassStateful method name: removeSatefull
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+FINE: Found PreDestroy method in ejbs.EJBClassStateful method name: prepareDestroy
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+FINE: Found PrePassivate method in ejbs.EJBClassStateful method name: preparePassivate
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+FINE: Found PostConstruct method in ejbs.EJBClassStateful method name: init
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+FINE: Found PostActivate method in ejbs.EJBClassStateful method name: refresh
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+INFO: Stateful getting PostContruct PrePassivate PostActivate PreDestroy and remove Methods: found5
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+INFO: Injection of EntityManager instance in Statefull(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+INFO: Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@18c4d8e) of EntityManager in ejbs.EJBClassStateful@101f935
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+INFO: Invoking Stateful PostConstruct method on EJB(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Invoking method: init on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatefulProxyFactory <init>
+WARNING: Scheduling Stateful passivation on EJB(ejbs.EJBClassStateful@101f935) @Rate: every 40 seconds
+févr. 10, 2014 12:13:34 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Statful on Called EJB(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:34 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Statful on Called EJB(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatefulProxyFactory invoke
+FINER: Invoking method: removeSatefull on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatefulProxyFactory invoke
+INFO: Changing Statful state to Killed on EJB(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatefulProxyFactory invoke
+INFO: Invoking Statful PreDestroy method on EJB(ejbs.EJBClassStateful@101f935)
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatefulProxyFactory invoke
+INFO: Invoking Statful Remove method on EJB(ejbs.EJBClassStateful@101f935)

@@ -1,0 +1,46 @@
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+INFO: Stateless getting PostContruct and PreDestroy Methods from class: ejbs.EJBClassStateless
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+FINE: Found PreDestroy method in ejbs.EJBClassStateless method name: prepareDestroy
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+FINE: Found PostConstruct method in ejbs.EJBClassStateless method name: init
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+INFO: Stateless getting PostContruct and PreDestroy Methods from class: found2
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+INFO: Injection of EntityManager instance in Stateless(ejbs.EJBClassStateless@ef98ac)
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+INFO: Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@105f5a) of EntityManager in ejbs.EJBClassStateless@ef98ac
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+INFO: Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@ef98ac)
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory invoke
+FINER: Invoking method: init on Stateless EJB(ejbs.EJBClassStateless@ef98ac) using args: null
+févr. 10, 2014 12:13:33 PM org.isima.ejb.container.StatelessProxyFactory <init>
+WARNING: Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@ef98ac) @Rate: every 3 seconds
+févr. 10, 2014 12:13:34 PM org.isima.ejb.container.StatelessProxyFactory invoke
+FINER: Stateless on Called EJB(ejbs.EJBClassStateless@ef98ac)
+févr. 10, 2014 12:13:34 PM org.isima.ejb.container.StatelessProxyFactory invoke
+FINER: Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@ef98ac) using args: null
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatelessProxyFactory$Killer run
+INFO: Stateless getting killed, because unaccessed since 5 seconds
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatelessProxyFactory setState
+INFO: Changing Stateless state to Killed on EJB(ejbs.EJBClassStateless@ef98ac)
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatelessProxyFactory setState
+INFO: Invoking Stateless PreDestroy method on EJB(ejbs.EJBClassStateless@ef98ac)
+févr. 10, 2014 12:13:39 PM org.isima.ejb.container.StatelessProxyFactory setState
+WARNING: Stateless Killed
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory invoke
+WARNING: LifeCycle alert: Stateless removed, renewing
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory renewStateless
+INFO: Renewing Stateless killed instance
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory renewStateless
+FINEST: Re-instantiate stateless EJB
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory renewStateless
+FINEST: Getting EntityLanager Instance to the new EJB(ejbs.EJBClassStateless@956f01)
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory renewStateless
+WARNING: Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@956f01) @Rate: every 3 seconds
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory renewStateless
+INFO: Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@956f01)
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory invoke
+FINER: Stateless on Called EJB(ejbs.EJBClassStateless@956f01)
+févr. 10, 2014 12:13:43 PM org.isima.ejb.container.StatelessProxyFactory invoke
+FINER: Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@956f01) using args: null
