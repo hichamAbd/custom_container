@@ -24,7 +24,7 @@ import org.isima.ejb.annotations.Stateless;
 import org.isima.ejb.exception.AnnotationException;
 import org.isima.ejb.exception.PersistanceException;
 import org.isima.ejb.logging.LoggingConfiguratorFactory;
-import org.isima.ejb.persistenceUnitSchema.ObjectFactory;
+import org.isima.ejb.persistenceUnitSchema.PersistenceObjectFactory;
 import org.isima.ejb.persistenceUnitSchema.Persistence;
 import org.reflections.Reflections;
 
@@ -73,7 +73,7 @@ public class EJBContainer {
 		if(url != null){
 			JAXBContext jaxbContext;
 			try {
-				jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+				jaxbContext = JAXBContext.newInstance(PersistenceObjectFactory.class);
 
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 				persistanceUnit = (Persistence) unmarshaller.unmarshal(url);

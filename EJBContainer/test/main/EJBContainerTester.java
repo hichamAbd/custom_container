@@ -47,6 +47,7 @@ public class EJBContainerTester {
 
 		//Testing stateful remove
 		ejbStateful.removeSatefull();
+		ejbStateless.aBusinessMethod();
 
 		//Testing singleton destroy
 		ejbSingleton.prepareDestroy();
