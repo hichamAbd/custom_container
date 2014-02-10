@@ -19,7 +19,6 @@ public abstract class EntityManager{
 	
 	protected void setPersistence(Persistence persistence) {
 		this.persistence = persistence;
-	}
-	
+	}	
 	
 }

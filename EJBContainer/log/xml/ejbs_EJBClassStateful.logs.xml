@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813367</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515433</millis>
   <sequence>14</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>Stateful getting PostContruct PrePassivate PostActivate PreDestroy and remove Methods from class: ejbs.EJBClassStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813371</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515438</millis>
   <sequence>15</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINE</level>
@@ -24,8 +24,8 @@
   <message>Found Remove method in ejbs.EJBClassStateful method name: removeSatefull</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813373</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515440</millis>
   <sequence>16</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINE</level>
@@ -35,8 +35,8 @@
   <message>Found PreDestroy method in ejbs.EJBClassStateful method name: prepareDestroy</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813375</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515441</millis>
   <sequence>17</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINE</level>
@@ -46,8 +46,8 @@
   <message>Found PrePassivate method in ejbs.EJBClassStateful method name: preparePassivate</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813376</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515443</millis>
   <sequence>18</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINE</level>
@@ -57,8 +57,8 @@
   <message>Found PostConstruct method in ejbs.EJBClassStateful method name: init</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813378</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515444</millis>
   <sequence>19</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINE</level>
@@ -68,8 +68,8 @@
   <message>Found PostActivate method in ejbs.EJBClassStateful method name: refresh</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813378</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515445</millis>
   <sequence>20</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
@@ -79,146 +79,146 @@
   <message>Stateful getting PostContruct PrePassivate PostActivate PreDestroy and remove Methods: found5</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813379</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515445</millis>
   <sequence>21</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injection of EntityManager instance in Statefull(ejbs.EJBClassStateful@101f935)</message>
+  <message>Injection of EntityManager instance in Statefull(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813383</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515456</millis>
   <sequence>22</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@18c4d8e) of EntityManager in ejbs.EJBClassStateful@101f935</message>
+  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@173bb48) of EntityManager in ejbs.EJBClassStateful@9046b1</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813384</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515457</millis>
   <sequence>23</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Invoking Stateful PostConstruct method on EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Invoking Stateful PostConstruct method on EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813385</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515458</millis>
   <sequence>24</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: init on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null</message>
+  <message>Invoking method: init on Stateful EJB(ejbs.EJBClassStateful@9046b1) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813386</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515458</millis>
   <sequence>25</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>WARNING</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Scheduling Stateful passivation on EJB(ejbs.EJBClassStateful@101f935) @Rate: every 40 seconds</message>
+  <message>Scheduling Stateful passivation on EJB(ejbs.EJBClassStateful@9046b1) @Rate: every 40 seconds</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814811</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517229</millis>
   <sequence>69</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Statful on Called EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Statful on Called EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814811</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517229</millis>
   <sequence>70</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null</message>
+  <message>Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@9046b1) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819818</millis>
-  <sequence>75</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522244</millis>
+  <sequence>85</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Statful on Called EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Statful on Called EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819818</millis>
-  <sequence>76</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522244</millis>
+  <sequence>86</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null</message>
+  <message>Invoking method: aBusinessMethod on Stateful EJB(ejbs.EJBClassStateful@9046b1) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823825</millis>
-  <sequence>89</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526264</millis>
+  <sequence>99</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: removeSatefull on Stateful EJB(ejbs.EJBClassStateful@101f935) using args: null</message>
+  <message>Invoking method: removeSatefull on Stateful EJB(ejbs.EJBClassStateful@9046b1) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823826</millis>
-  <sequence>90</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526264</millis>
+  <sequence>100</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Changing Statful state to Killed on EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Changing Statful state to Killed on EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823827</millis>
-  <sequence>91</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526264</millis>
+  <sequence>101</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking Statful PreDestroy method on EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Invoking Statful PreDestroy method on EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823828</millis>
-  <sequence>92</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526265</millis>
+  <sequence>102</sequence>
   <logger>ejbs.EJBClassStateful</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatefulProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking Statful Remove method on EJB(ejbs.EJBClassStateful@101f935)</message>
+  <message>Invoking Statful Remove method on EJB(ejbs.EJBClassStateful@9046b1)</message>
 </record>
 </log>

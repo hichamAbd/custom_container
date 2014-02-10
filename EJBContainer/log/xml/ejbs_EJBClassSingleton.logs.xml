@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814333</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516630</millis>
   <sequence>46</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>Singleton getting PostContruct and PreDestroy Methods from class: ejbs.EJBClassSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814334</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516632</millis>
   <sequence>47</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINE</level>
@@ -24,8 +24,8 @@
   <message>Found PreDestroy method in ejbs.EJBClassSingleton method name: prepareDestroy</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814335</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516633</millis>
   <sequence>48</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINE</level>
@@ -35,8 +35,8 @@
   <message>Found PostConstruct method in ejbs.EJBClassSingleton method name: init</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814336</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516633</millis>
   <sequence>49</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
@@ -46,168 +46,168 @@
   <message>Singleton getting PostContruct and PreDestroy Methods from class: found2</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814337</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516634</millis>
   <sequence>50</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injection of EntityManager instance in Singleton(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Injection of EntityManager instance in Singleton(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814338</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516647</millis>
   <sequence>51</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@2e2dc6) of EntityManager in ejbs.EJBClassSingleton@f3dcf0</message>
+  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@7116e3) of EntityManager in ejbs.EJBClassSingleton@1c8e5f4</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814338</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516648</millis>
   <sequence>52</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Invoking Startup Singleton PostConstruct method on EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Invoking Startup Singleton PostConstruct method on EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814339</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516649</millis>
   <sequence>53</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: init on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: null</message>
+  <message>Invoking method: init on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814807</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517225</millis>
   <sequence>62</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814808</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517225</millis>
   <sequence>63</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: null</message>
+  <message>Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814809</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517226</millis>
   <sequence>65</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814809</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517227</millis>
   <sequence>66</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814810</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517228</millis>
   <sequence>67</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: null</message>
+  <message>Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814810</millis>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517228</millis>
   <sequence>68</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: equals on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: [com.sun.proxy.$Proxy30@19876c1, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@9c9a8c]</message>
+  <message>Invoking method: equals on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: [com.sun.proxy.$Proxy30@aa8801, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@1c70c75]</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814817</millis>
-  <sequence>73</sequence>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517240</millis>
+  <sequence>77</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814817</millis>
-  <sequence>74</sequence>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517240</millis>
+  <sequence>78</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: aBusinessMethod on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: null</message>
+  <message>Invoking method: aBusinessMethod on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823828</millis>
-  <sequence>93</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526266</millis>
+  <sequence>103</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: prepareDestroy on Singleton EJB(ejbs.EJBClassSingleton@f3dcf0) using args: null</message>
+  <message>Invoking method: prepareDestroy on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823829</millis>
-  <sequence>94</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526266</millis>
+  <sequence>104</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>setState</method>
   <thread>1</thread>
-  <message>Changing Singleton state to Killed on EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Changing Singleton state to Killed on EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823829</millis>
-  <sequence>95</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526267</millis>
+  <sequence>105</sequence>
   <logger>ejbs.EJBClassSingleton</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.SingletonProxyFactory</class>
   <method>setState</method>
   <thread>1</thread>
-  <message>Invoking Singleton PreDestroy method on EJB(ejbs.EJBClassSingleton@f3dcf0)</message>
+  <message>Invoking Singleton PreDestroy method on EJB(ejbs.EJBClassSingleton@1c8e5f4)</message>
 </record>
 </log>

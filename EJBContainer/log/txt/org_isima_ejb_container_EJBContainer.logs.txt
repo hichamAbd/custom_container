@@ -1,68 +1,68 @@
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer <init>
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer <init>
 INFO: BootStrap init launch start on container (org.isima.ejb.container.EJBContainer@1b80d9b)
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer bootstrapInit
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer bootstrapInit
 INFO: Loading persistence.xml file from class loader ...
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer <init>
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer <init>
 INFO: BootStrap init end (org.isima.ejb.container.EJBContainer@1b80d9b)
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 INFO: Starting injection for object: main.EJBContainerTester@d78139
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 FINE: Parsing fields of object: main.EJBContainerTester@d78139
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 FINER: Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbStateful
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 FINER: Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbStateless
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 FINER: Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbSingleton
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 INFO: Found 3 EJB annotated fields in object: main.EJBContainerTester@d78139
-févr. 10, 2014 12:13:32 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:54 PM org.isima.ejb.container.EJBContainer inject
 FINE: Getting Local interface (interface ejbs.Local.LocalEJBInterfaceStateful) implementation for field: ejbStateful
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer inject
 INFO: Found implementation of interface ejbs.Local.LocalEJBInterfaceStateful in type:ejbs.EJBClassStateful
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 FINE: Getting EJB type from field: ejbStateful
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 INFO: Found Stateful EJB in field: ejbStateful
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBProxy
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBProxy
 INFO: Getting Stateful proxy instance of interface ejbs.Local.LocalEJBInterfaceStateful for class: ejbs.EJBClassStateful in field: ejbStateful
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer inject
 FINE: Getting Local interface (interface ejbs.Local.LocalEJBInterfaceStateless) implementation for field: ejbStateless
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer inject
 INFO: Found implementation of interface ejbs.Local.LocalEJBInterfaceStateless in type:ejbs.EJBClassStateless
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 FINE: Getting EJB type from field: ejbStateless
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 INFO: Found Stateless EJB in field: ejbStateless
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer getEJBProxy
+févr. 10, 2014 12:41:55 PM org.isima.ejb.container.EJBContainer getEJBProxy
 INFO: Getting Stateless proxy instance of interface ejbs.Local.LocalEJBInterfaceStateless for class: ejbs.EJBClassStateless in field: ejbStateless
-févr. 10, 2014 12:13:33 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
 FINE: Getting Local interface (interface ejbs.Local.LocalEJBInterfaceSingleton) implementation for field: ejbSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
 INFO: Found implementation of interface ejbs.Local.LocalEJBInterfaceSingleton in type:ejbs.EJBClassSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 FINE: Getting EJB type from field: ejbSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 INFO: Found Startup Singleton EJB in field: ejbSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
 INFO: First instanciation of Singleton type : interface ejbs.Local.LocalEJBInterfaceSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer getEJBProxy
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer getEJBProxy
 INFO: Getting Startup Singleton proxy instance of interface ejbs.Local.LocalEJBInterfaceSingleton for class: ejbs.EJBClassSingleton in field: ejbSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
-INFO: Starting injection for object: main.ClassWithSingleton@10d6e40
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
-FINE: Parsing fields of object: main.ClassWithSingleton@10d6e40
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
-FINER: Found EJB annotated field in object: main.ClassWithSingleton@10d6e40 field name: singleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
-INFO: Found 1 EJB annotated fields in object: main.ClassWithSingleton@10d6e40
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
+INFO: Starting injection for object: main.ClassWithSingleton@15b26b
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
+FINE: Parsing fields of object: main.ClassWithSingleton@15b26b
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
+FINER: Found EJB annotated field in object: main.ClassWithSingleton@15b26b field name: singleton
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
+INFO: Found 1 EJB annotated fields in object: main.ClassWithSingleton@15b26b
+févr. 10, 2014 12:41:56 PM org.isima.ejb.container.EJBContainer inject
 FINE: Getting Local interface (interface ejbs.Local.LocalEJBInterfaceSingleton) implementation for field: singleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
+févr. 10, 2014 12:41:57 PM org.isima.ejb.container.EJBContainer inject
 INFO: Found implementation of interface ejbs.Local.LocalEJBInterfaceSingleton in type:ejbs.EJBClassSingleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:57 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 FINE: Getting EJB type from field: singleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer getEJBFieldType
+févr. 10, 2014 12:41:57 PM org.isima.ejb.container.EJBContainer getEJBFieldType
 INFO: Found Startup Singleton EJB in field: singleton
-févr. 10, 2014 12:13:34 PM org.isima.ejb.container.EJBContainer inject
-INFO: Reaching already existing Singleton EJB. Retrieving Singleton : com.sun.proxy.$Proxy30@19876c1, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@9c9a8c
+févr. 10, 2014 12:41:57 PM org.isima.ejb.container.EJBContainer inject
+INFO: Reaching already existing Singleton EJB. Retrieving Singleton : com.sun.proxy.$Proxy30@aa8801, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@1c70c75

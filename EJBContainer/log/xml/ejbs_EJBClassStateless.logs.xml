@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813856</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515995</millis>
   <sequence>31</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>Stateless getting PostContruct and PreDestroy Methods from class: ejbs.EJBClassStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813858</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515997</millis>
   <sequence>32</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINE</level>
@@ -24,8 +24,8 @@
   <message>Found PreDestroy method in ejbs.EJBClassStateless method name: prepareDestroy</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813858</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515998</millis>
   <sequence>33</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINE</level>
@@ -35,8 +35,8 @@
   <message>Found PostConstruct method in ejbs.EJBClassStateless method name: init</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813859</millis>
+  <date>2014-02-10T12:41:55</date>
+  <millis>1392032515998</millis>
   <sequence>34</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
@@ -46,119 +46,119 @@
   <message>Stateless getting PostContruct and PreDestroy Methods from class: found2</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813860</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516000</millis>
   <sequence>35</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injection of EntityManager instance in Stateless(ejbs.EJBClassStateless@ef98ac)</message>
+  <message>Injection of EntityManager instance in Stateless(ejbs.EJBClassStateless@24ece4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813862</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516010</millis>
   <sequence>36</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@105f5a) of EntityManager in ejbs.EJBClassStateless@ef98ac</message>
+  <message>Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@3c7e3f) of EntityManager in ejbs.EJBClassStateless@24ece4</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813863</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516011</millis>
   <sequence>37</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@ef98ac)</message>
+  <message>Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@24ece4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813864</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516012</millis>
   <sequence>38</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: init on Stateless EJB(ejbs.EJBClassStateless@ef98ac) using args: null</message>
+  <message>Invoking method: init on Stateless EJB(ejbs.EJBClassStateless@24ece4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:33</date>
-  <millis>1392030813865</millis>
+  <date>2014-02-10T12:41:56</date>
+  <millis>1392032516013</millis>
   <sequence>39</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>WARNING</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@ef98ac) @Rate: every 3 seconds</message>
+  <message>Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@24ece4) @Rate: every 3 seconds</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814816</millis>
-  <sequence>71</sequence>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517236</millis>
+  <sequence>73</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Stateless on Called EJB(ejbs.EJBClassStateless@ef98ac)</message>
+  <message>Stateless on Called EJB(ejbs.EJBClassStateless@24ece4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:34</date>
-  <millis>1392030814816</millis>
-  <sequence>72</sequence>
+  <date>2014-02-10T12:41:57</date>
+  <millis>1392032517237</millis>
+  <sequence>74</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@ef98ac) using args: null</message>
+  <message>Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@24ece4) using args: null</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819867</millis>
-  <sequence>77</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522016</millis>
+  <sequence>81</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory$Killer</class>
   <method>run</method>
   <thread>11</thread>
-  <message>Stateless getting killed, because unaccessed since 5 seconds</message>
+  <message>Stateless getting killed, because unaccessed since 4 seconds</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819867</millis>
-  <sequence>78</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522017</millis>
+  <sequence>82</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>setState</method>
   <thread>11</thread>
-  <message>Changing Stateless state to Killed on EJB(ejbs.EJBClassStateless@ef98ac)</message>
+  <message>Changing Stateless state to Killed on EJB(ejbs.EJBClassStateless@24ece4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819868</millis>
-  <sequence>79</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522018</millis>
+  <sequence>83</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>setState</method>
   <thread>11</thread>
-  <message>Invoking Stateless PreDestroy method on EJB(ejbs.EJBClassStateless@ef98ac)</message>
+  <message>Invoking Stateless PreDestroy method on EJB(ejbs.EJBClassStateless@24ece4)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:39</date>
-  <millis>1392030819869</millis>
-  <sequence>80</sequence>
+  <date>2014-02-10T12:42:02</date>
+  <millis>1392032522018</millis>
+  <sequence>84</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>WARNING</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
@@ -167,9 +167,9 @@
   <message>Stateless Killed</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823820</millis>
-  <sequence>81</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526247</millis>
+  <sequence>89</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>WARNING</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
@@ -178,9 +178,9 @@
   <message>LifeCycle alert: Stateless removed, renewing</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823820</millis>
-  <sequence>82</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526247</millis>
+  <sequence>90</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
@@ -189,9 +189,9 @@
   <message>Renewing Stateless killed instance</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823821</millis>
-  <sequence>83</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526248</millis>
+  <sequence>91</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINEST</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
@@ -200,58 +200,58 @@
   <message>Re-instantiate stateless EJB</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823822</millis>
-  <sequence>84</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526248</millis>
+  <sequence>92</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINEST</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>renewStateless</method>
   <thread>1</thread>
-  <message>Getting EntityLanager Instance to the new EJB(ejbs.EJBClassStateless@956f01)</message>
+  <message>Getting EntityLanager Instance to the new EJB(ejbs.EJBClassStateless@62c542)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823822</millis>
-  <sequence>85</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526260</millis>
+  <sequence>93</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>WARNING</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>renewStateless</method>
   <thread>1</thread>
-  <message>Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@956f01) @Rate: every 3 seconds</message>
+  <message>Scheduling Stateless kill on  EJB(ejbs.EJBClassStateless@62c542) @Rate: every 3 seconds</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823823</millis>
-  <sequence>86</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526260</millis>
+  <sequence>94</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>renewStateless</method>
   <thread>1</thread>
-  <message>Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@956f01)</message>
+  <message>Invoking Stateless PostConstruct method on EJB(ejbs.EJBClassStateless@62c542)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823824</millis>
-  <sequence>87</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526261</millis>
+  <sequence>95</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Stateless on Called EJB(ejbs.EJBClassStateless@956f01)</message>
+  <message>Stateless on Called EJB(ejbs.EJBClassStateless@62c542)</message>
 </record>
 <record>
-  <date>2014-02-10T12:13:43</date>
-  <millis>1392030823824</millis>
-  <sequence>88</sequence>
+  <date>2014-02-10T12:42:06</date>
+  <millis>1392032526262</millis>
+  <sequence>96</sequence>
   <logger>ejbs.EJBClassStateless</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.StatelessProxyFactory</class>
   <method>invoke</method>
   <thread>1</thread>
-  <message>Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@956f01) using args: null</message>
+  <message>Invoking method: aBusinessMethod on Stateless EJB(ejbs.EJBClassStateless@62c542) using args: null</message>
 </record>
 </log>
