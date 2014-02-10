@@ -46,6 +46,7 @@ public class SingletonProxyFactory implements InvocationHandler{
 
 	private SingletonProxyFactory(Object obj,Persistence persistenceUnit,boolean startupFlag){
 		this.ejbImplementation = obj;
+		
 		//Setting logs
 		logger = Logger.getLogger(this.ejbImplementation.getClass().getName());
 		LoggingConfiguratorFactory lcf = new LoggingConfiguratorFactory(logger,level);

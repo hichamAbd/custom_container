@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 	private final Logger logger;
 	private static final Level level = Level.ALL;
 	
-	private static final long KILLING_DELAY_SECONDS = 5l;
+	private static final long KILLING_DELAY_SECONDS = 3l;
 	private static final String STATELESS_READY_STATE = "ready";
 	private static final String STATELESS_KILLED_STATE = "killed";
 	private static final String POST_CONSTRUCT_METHOD = "postconstruct";
@@ -68,17 +69,20 @@ public class StatelessProxyFactory implements InvocationHandler{
 	}
 	
 	
-	private final ScheduledExecutorService killScheduler = 	Executors.newScheduledThreadPool(1);
+	private ScheduledExecutorService killScheduler = 	Executors.newScheduledThreadPool(1);
 	private Map<String, Method> methods;
 	private Set<String> methodsNames;
 	private static long lastTimeCalled;
 	private Killer killer;
 	Object ejbImplementation;
 	Persistence persistence;
+	private Class<?> ejbImplementationClass;
 	private String state;
+	private Field entityMangerFieldOfThisStateless;
 
-	private StatelessProxyFactory(Object obj,Persistence persistenceUnit){
+	private StatelessProxyFactory(Object obj,Persistence persistenceUnit,Class<?> implementingClass){
 		this.ejbImplementation = obj;
+		ejbImplementationClass = implementingClass;
 		
 		//Setting logs
 		logger = Logger.getLogger(this.ejbImplementation.getClass().getName());
@@ -139,6 +143,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 							if( (ejbField.getType().equals(EntityManager.class)) && this.persistence != null){
 								ConcreteEntityManager entityManager = (ConcreteEntityManager) entityManagerConstructor.newInstance(this.persistence);
 								logger.info("Injecting instance ("+entityManager.toString()+") of EntityManager in "+ejbImplementation.toString());
+								entityMangerFieldOfThisStateless = ejbField;
 								ejbField.set(obj, entityManager);
 							}else if(this.persistence == null){
 								PersistanceException e = new PersistanceException("Persistence file not found: Couldn't find persistence.xml file in META-INF");
@@ -172,7 +177,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 	}
 	
 	public static Object proxyInstance(Field ejbField,Class<?> implementingClass,Persistence persistenceUnit) throws IllegalArgumentException, InstantiationException, IllegalAccessException, ClassNotFoundException{
-		return Proxy.newProxyInstance(ejbField.getType().getClassLoader(), new Class[]{ejbField.getType()}, new StatelessProxyFactory(Class.forName(implementingClass.getName()).newInstance(),persistenceUnit));
+		return Proxy.newProxyInstance(ejbField.getType().getClassLoader(), new Class[]{ejbField.getType()}, new StatelessProxyFactory(Class.forName(implementingClass.getName()).newInstance(),persistenceUnit,implementingClass));
 	}
 
 	private String getState() {
@@ -193,6 +198,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 			}
 			this.ejbImplementation = null;
 			this.killScheduler.shutdown();
+			logger.warning("Stateless Killed");
 		}
 	}
 	
@@ -200,17 +206,18 @@ public class StatelessProxyFactory implements InvocationHandler{
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		boolean isEJBAnnotated = testAnnotatedMethod(method.getName());
-		if(!isEJBAnnotated){
-			//Update lastCalled time
-			logger.finer("Singleton on Called EJB("+ejbImplementation.toString()+")");	
-			lastTimeCalled = System.currentTimeMillis();			
-		}
-		
+			
 		//Change state to active if has been passivated
 		if(this.getState().equals(STATELESS_KILLED_STATE) ){
-			IllegalStateException ise =  new IllegalStateException("LifeCycle Exception: Stateless removed");
-			logger.severe("Severe Error("+ise.getMessage()+")");
-			throw ise;
+			//IllegalStateException ise =  new IllegalStateException("LifeCycle Exception: Stateless removed");
+			logger.warning("LifeCycle alert: Stateless removed, renewing");
+			renewStateless();
+			//throw ise;
+		}
+		if(!isEJBAnnotated){
+			//Update lastCalled time
+			logger.finer("Stateless on Called EJB("+ejbImplementation.toString()+")");	
+			lastTimeCalled = System.currentTimeMillis();			
 		}
 		logger.finer("Invoking method: "+method.getName()+" on Stateless EJB("+ejbImplementation.toString()+") using args: "+Arrays.toString(args));
 		if(Object.class  == method.getDeclaringClass()) {
@@ -230,7 +237,7 @@ public class StatelessProxyFactory implements InvocationHandler{
 		       }
 		   }
 		
-		return method.invoke(ejbImplementation, args);
+		return method.invoke(this.ejbImplementation, args);
 	}
 
 	private Object getEjbImplementation() {
@@ -245,5 +252,34 @@ public class StatelessProxyFactory implements InvocationHandler{
 			}
 		}
 		return false;
+	}
+	
+	
+	private Object renewStateless(){
+		logger.info("Renewing Stateless killed instance");
+		try {
+			
+			logger.finest("Re-instantiate stateless EJB");
+			this.ejbImplementation = Class.forName(ejbImplementationClass.getName()).newInstance();
+			
+			logger.finest("Getting EntityLanager Instance to the new EJB("+ejbImplementation.toString()+")");
+			Constructor<?> entityManagerConstructor = Class.forName(ConcreteEntityManager.class.getName()).getConstructor(Persistence.class);
+			entityMangerFieldOfThisStateless.set(this.ejbImplementation, entityManagerConstructor.newInstance(this.persistence));
+			
+			logger.warning("Scheduling Stateless kill on  EJB("+ejbImplementation.toString()+") @Rate: every "+KILLING_DELAY_SECONDS+" seconds");
+			this.state = STATELESS_READY_STATE;
+			if(methods.get(POST_CONSTRUCT_METHOD)!=null){
+				logger.info("Invoking Stateless PostConstruct method on EJB("+ejbImplementation.toString()+")");
+				methods.get(POST_CONSTRUCT_METHOD).invoke(this.ejbImplementation, (Object[])null);
+			}
+			
+			killScheduler = Executors.newScheduledThreadPool(1);
+			killScheduler.scheduleAtFixedRate(this.killer,KILLING_DELAY_SECONDS,KILLING_DELAY_SECONDS,TimeUnit.SECONDS);			
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException | InvocationTargetException| IllegalArgumentException | NoSuchMethodException | SecurityException e) {
+			logger.severe("Sever Error(Renewing Statless instance: "+e.getMessage()+")");
+			e.printStackTrace();
+		}
+		return ejbImplementation;
 	}
 }

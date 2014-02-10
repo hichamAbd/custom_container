@@ -84,6 +84,7 @@ public class StatefulProxyFactory implements InvocationHandler {
 	
 	private StatefulProxyFactory(Object obj,Persistence persistenceUnit){
 		this.ejbImplementation = obj;
+		
 		//Setting logs
 		logger = Logger.getLogger(this.ejbImplementation.getClass().getName());
 		LoggingConfiguratorFactory lcf = new LoggingConfiguratorFactory(logger,level);
