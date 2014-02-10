@@ -1,2 +1,6 @@
 /META-INF
 /org
+/ejbs
+/entites
+/main
+/persistence.xml
