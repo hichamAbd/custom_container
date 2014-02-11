@@ -1,0 +1,4 @@
+févr. 11, 2014 6:48:39 PM org.isima.ejb.entityManagement.ConcreteEntityManager remove
+INFO: Removing Entity(entites.BEntity@aabe71 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@24ece4
+févr. 11, 2014 6:48:39 PM org.isima.ejb.entityManagement.ConcreteEntityManager merge
+INFO: Merging Entity(entites.CEntity@1bcfb6b in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@24ece4

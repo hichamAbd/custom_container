@@ -1,4 +1,0 @@
-févr. 10, 2014 12:41:57 PM org.isima.ejb.entityManagement.ConcreteEntityManager persist
-INFO: Persiting Entity(entites.AEntity@1fb7500 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@7116e3
-févr. 10, 2014 12:41:57 PM org.isima.ejb.entityManagement.ConcreteEntityManager merge
-INFO: Merging Entity(entites.BEntity@1be5404 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@7116e3

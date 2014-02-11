@@ -1,4 +1,8 @@
-févr. 10, 2014 12:42:06 PM org.isima.ejb.entityManagement.ConcreteEntityManager remove
-INFO: Removing Entity(entites.BEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4
-févr. 10, 2014 12:42:06 PM org.isima.ejb.entityManagement.ConcreteEntityManager merge
-INFO: Merging Entity(entites.CEntity@188145f in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4
+févr. 11, 2014 6:48:50 PM org.isima.ejb.entityManagement.ConcreteEntityManager remove
+INFO: Removing Entity(entites.BEntity@1a355b7 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4
+févr. 11, 2014 6:48:50 PM org.isima.ejb.entityManagement.ConcreteEntityManager merge
+INFO: Merging Entity(entites.CEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4
+févr. 11, 2014 6:48:50 PM org.isima.ejb.entityManagement.ConcreteEntityManager remove
+INFO: Removing Entity(entites.BEntity@1a355b7 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4
+févr. 11, 2014 6:48:50 PM org.isima.ejb.entityManagement.ConcreteEntityManager merge
+INFO: Merging Entity(entites.CEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4

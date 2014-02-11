@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514499</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917468</millis>
   <sequence>0</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -13,8 +13,8 @@
   <message>BootStrap init launch start on container (org.isima.ejb.container.EJBContainer@1b80d9b)</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514513</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917481</millis>
   <sequence>1</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -24,8 +24,8 @@
   <message>Loading persistence.xml file from class loader ...</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514659</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917626</millis>
   <sequence>2</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -35,8 +35,8 @@
   <message>BootStrap init end (org.isima.ejb.container.EJBContainer@1b80d9b)</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514661</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917628</millis>
   <sequence>3</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -46,8 +46,8 @@
   <message>Starting injection for object: main.EJBContainerTester@d78139</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514662</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917630</millis>
   <sequence>4</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -57,8 +57,8 @@
   <message>Parsing fields of object: main.EJBContainerTester@d78139</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514663</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917631</millis>
   <sequence>5</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINER</level>
@@ -68,8 +68,8 @@
   <message>Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514664</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917632</millis>
   <sequence>6</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINER</level>
@@ -79,8 +79,8 @@
   <message>Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514665</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917633</millis>
   <sequence>7</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINER</level>
@@ -90,8 +90,8 @@
   <message>Found EJB annotated field in object: main.EJBContainerTester@d78139 field name: ejbSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514666</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917634</millis>
   <sequence>8</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -101,8 +101,8 @@
   <message>Found 3 EJB annotated fields in object: main.EJBContainerTester@d78139</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:54</date>
-  <millis>1392032514667</millis>
+  <date>2014-02-11T18:48:37</date>
+  <millis>1392140917636</millis>
   <sequence>9</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -112,8 +112,8 @@
   <message>Getting Local interface (interface ejbs.Local.LocalEJBInterfaceStateful) implementation for field: ejbStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515412</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918312</millis>
   <sequence>10</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -123,8 +123,8 @@
   <message>Found implementation of interface ejbs.Local.LocalEJBInterfaceStateful in type:ejbs.EJBClassStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515414</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918313</millis>
   <sequence>11</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -134,8 +134,8 @@
   <message>Getting EJB type from field: ejbStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515417</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918315</millis>
   <sequence>12</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -145,8 +145,8 @@
   <message>Found Stateful EJB in field: ejbStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515419</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918316</millis>
   <sequence>13</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -156,8 +156,8 @@
   <message>Getting Stateful proxy instance of interface ejbs.Local.LocalEJBInterfaceStateful for class: ejbs.EJBClassStateful in field: ejbStateful</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515462</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918395</millis>
   <sequence>26</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -167,8 +167,8 @@
   <message>Getting Local interface (interface ejbs.Local.LocalEJBInterfaceStateless) implementation for field: ejbStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515976</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918819</millis>
   <sequence>27</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -178,8 +178,8 @@
   <message>Found implementation of interface ejbs.Local.LocalEJBInterfaceStateless in type:ejbs.EJBClassStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515978</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918820</millis>
   <sequence>28</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -189,8 +189,8 @@
   <message>Getting EJB type from field: ejbStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515980</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918822</millis>
   <sequence>29</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -200,8 +200,8 @@
   <message>Found Stateless EJB in field: ejbStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:55</date>
-  <millis>1392032515981</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918823</millis>
   <sequence>30</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -211,8 +211,8 @@
   <message>Getting Stateless proxy instance of interface ejbs.Local.LocalEJBInterfaceStateless for class: ejbs.EJBClassStateless in field: ejbStateless</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516016</millis>
+  <date>2014-02-11T18:48:38</date>
+  <millis>1392140918848</millis>
   <sequence>40</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -222,8 +222,8 @@
   <message>Getting Local interface (interface ejbs.Local.LocalEJBInterfaceSingleton) implementation for field: ejbSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516608</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919280</millis>
   <sequence>41</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -233,8 +233,8 @@
   <message>Found implementation of interface ejbs.Local.LocalEJBInterfaceSingleton in type:ejbs.EJBClassSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516610</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919281</millis>
   <sequence>42</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -244,8 +244,8 @@
   <message>Getting EJB type from field: ejbSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516614</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919284</millis>
   <sequence>43</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -255,8 +255,8 @@
   <message>Found Startup Singleton EJB in field: ejbSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516615</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919285</millis>
   <sequence>44</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -266,8 +266,8 @@
   <message>First instanciation of Singleton type : interface ejbs.Local.LocalEJBInterfaceSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516617</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919286</millis>
   <sequence>45</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -277,52 +277,52 @@
   <message>Getting Startup Singleton proxy instance of interface ejbs.Local.LocalEJBInterfaceSingleton for class: ejbs.EJBClassSingleton in field: ejbSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516651</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919312</millis>
   <sequence>54</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.EJBContainer</class>
   <method>inject</method>
   <thread>1</thread>
-  <message>Starting injection for object: main.ClassWithSingleton@15b26b</message>
+  <message>Starting injection for object: main.ClassWithSingleton@826a5f</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516653</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919313</millis>
   <sequence>55</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
   <class>org.isima.ejb.container.EJBContainer</class>
   <method>inject</method>
   <thread>1</thread>
-  <message>Parsing fields of object: main.ClassWithSingleton@15b26b</message>
+  <message>Parsing fields of object: main.ClassWithSingleton@826a5f</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516654</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919313</millis>
   <sequence>56</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINER</level>
   <class>org.isima.ejb.container.EJBContainer</class>
   <method>inject</method>
   <thread>1</thread>
-  <message>Found EJB annotated field in object: main.ClassWithSingleton@15b26b field name: singleton</message>
+  <message>Found EJB annotated field in object: main.ClassWithSingleton@826a5f field name: singleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516654</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919314</millis>
   <sequence>57</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.EJBContainer</class>
   <method>inject</method>
   <thread>1</thread>
-  <message>Found 1 EJB annotated fields in object: main.ClassWithSingleton@15b26b</message>
+  <message>Found 1 EJB annotated fields in object: main.ClassWithSingleton@826a5f</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:56</date>
-  <millis>1392032516655</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919314</millis>
   <sequence>58</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -332,8 +332,8 @@
   <message>Getting Local interface (interface ejbs.Local.LocalEJBInterfaceSingleton) implementation for field: singleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:57</date>
-  <millis>1392032517222</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919760</millis>
   <sequence>59</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -343,8 +343,8 @@
   <message>Found implementation of interface ejbs.Local.LocalEJBInterfaceSingleton in type:ejbs.EJBClassSingleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:57</date>
-  <millis>1392032517223</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919761</millis>
   <sequence>60</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>FINE</level>
@@ -354,8 +354,8 @@
   <message>Getting EJB type from field: singleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:57</date>
-  <millis>1392032517224</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919762</millis>
   <sequence>61</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
@@ -365,14 +365,14 @@
   <message>Found Startup Singleton EJB in field: singleton</message>
 </record>
 <record>
-  <date>2014-02-10T12:41:57</date>
-  <millis>1392032517226</millis>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919764</millis>
   <sequence>64</sequence>
   <logger>org.isima.ejb.container.EJBContainer</logger>
   <level>INFO</level>
   <class>org.isima.ejb.container.EJBContainer</class>
   <method>inject</method>
   <thread>1</thread>
-  <message>Reaching already existing Singleton EJB. Retrieving Singleton : com.sun.proxy.$Proxy30@aa8801, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@1c70c75</message>
+  <message>Reaching already existing Singleton EJB. Retrieving Singleton : com.sun.proxy.$Proxy30@7692f6, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@aa8801</message>
 </record>
 </log>

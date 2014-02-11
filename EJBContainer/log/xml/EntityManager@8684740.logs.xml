@@ -2,25 +2,47 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2014-02-10T12:42:06</date>
-  <millis>1392032526262</millis>
-  <sequence>97</sequence>
+  <date>2014-02-11T18:48:50</date>
+  <millis>1392140930857</millis>
+  <sequence>104</sequence>
   <logger>EntityManager@8684740</logger>
   <level>INFO</level>
   <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
   <method>remove</method>
   <thread>1</thread>
-  <message>Removing Entity(entites.BEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+  <message>Removing Entity(entites.BEntity@1a355b7 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
 </record>
 <record>
-  <date>2014-02-10T12:42:06</date>
-  <millis>1392032526263</millis>
-  <sequence>98</sequence>
+  <date>2014-02-11T18:48:50</date>
+  <millis>1392140930858</millis>
+  <sequence>105</sequence>
   <logger>EntityManager@8684740</logger>
   <level>INFO</level>
   <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
   <method>merge</method>
   <thread>1</thread>
-  <message>Merging Entity(entites.CEntity@188145f in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+  <message>Merging Entity(entites.CEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+</record>
+<record>
+  <date>2014-02-11T18:48:50</date>
+  <millis>1392140930867</millis>
+  <sequence>112</sequence>
+  <logger>EntityManager@8684740</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>remove</method>
+  <thread>1</thread>
+  <message>Removing Entity(entites.BEntity@1a355b7 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
+</record>
+<record>
+  <date>2014-02-11T18:48:50</date>
+  <millis>1392140930867</millis>
+  <sequence>113</sequence>
+  <logger>EntityManager@8684740</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>merge</method>
+  <thread>1</thread>
+  <message>Merging Entity(entites.CEntity@508204 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@8484c4</message>
 </record>
 </log>

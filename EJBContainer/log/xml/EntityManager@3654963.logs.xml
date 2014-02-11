@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919770</millis>
+  <sequence>71</sequence>
+  <logger>EntityManager@3654963</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>persist</method>
+  <thread>1</thread>
+  <message>Persiting Entity(entites.CEntity@1a75463 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@37c533</message>
+</record>
+<record>
+  <date>2014-02-11T18:48:39</date>
+  <millis>1392140919771</millis>
+  <sequence>72</sequence>
+  <logger>EntityManager@3654963</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>find</method>
+  <thread>1</thread>
+  <message>Try to find an Entity(AEntity) using PrimaryKey(1) in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@37c533</message>
+</record>
+<record>
+  <date>2014-02-11T18:48:46</date>
+  <millis>1392140926785</millis>
+  <sequence>94</sequence>
+  <logger>EntityManager@3654963</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>persist</method>
+  <thread>1</thread>
+  <message>Persiting Entity(entites.CEntity@1a75463 in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@37c533</message>
+</record>
+<record>
+  <date>2014-02-11T18:48:46</date>
+  <millis>1392140926786</millis>
+  <sequence>95</sequence>
+  <logger>EntityManager@3654963</logger>
+  <level>INFO</level>
+  <class>org.isima.ejb.entityManagement.ConcreteEntityManager</class>
+  <method>find</method>
+  <thread>1</thread>
+  <message>Try to find an Entity(AEntity) using PrimaryKey(1) in EntityManager : org.isima.ejb.entityManagement.ConcreteEntityManager@37c533</message>
+</record>
+</log>

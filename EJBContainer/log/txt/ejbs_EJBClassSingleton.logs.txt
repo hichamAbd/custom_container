@@ -1,38 +1,38 @@
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
 INFO: Singleton getting PostContruct and PreDestroy Methods from class: ejbs.EJBClassSingleton
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
 FINE: Found PreDestroy method in ejbs.EJBClassSingleton method name: prepareDestroy
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
 FINE: Found PostConstruct method in ejbs.EJBClassSingleton method name: init
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
 INFO: Singleton getting PostContruct and PreDestroy Methods from class: found2
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
-INFO: Injection of EntityManager instance in Singleton(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
-INFO: Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@7116e3) of EntityManager in ejbs.EJBClassSingleton@1c8e5f4
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory <init>
-INFO: Invoking Startup Singleton PostConstruct method on EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:56 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: init on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: equals on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: [com.sun.proxy.$Proxy30@aa8801, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@1c70c75]
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:41:57 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: aBusinessMethod on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null
-févr. 10, 2014 12:42:06 PM org.isima.ejb.container.SingletonProxyFactory invoke
-FINER: Invoking method: prepareDestroy on Singleton EJB(ejbs.EJBClassSingleton@1c8e5f4) using args: null
-févr. 10, 2014 12:42:06 PM org.isima.ejb.container.SingletonProxyFactory setState
-INFO: Changing Singleton state to Killed on EJB(ejbs.EJBClassSingleton@1c8e5f4)
-févr. 10, 2014 12:42:06 PM org.isima.ejb.container.SingletonProxyFactory setState
-INFO: Invoking Singleton PreDestroy method on EJB(ejbs.EJBClassSingleton@1c8e5f4)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
+INFO: Injection of EntityManager instance in Singleton(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
+INFO: Injecting instance (org.isima.ejb.entityManagement.ConcreteEntityManager@1c8e5f4) of EntityManager in ejbs.EJBClassSingleton@1e2ef3e
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory <init>
+INFO: Invoking Startup Singleton PostConstruct method on EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: init on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: null
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: null
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: toString on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: null
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: equals on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: [com.sun.proxy.$Proxy30@7692f6, with InvocationHandler org.isima.ejb.container.SingletonProxyFactory@aa8801]
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Singleton on Called EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:39 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: aBusinessMethod on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: null
+févr. 11, 2014 6:48:50 PM org.isima.ejb.container.SingletonProxyFactory invoke
+FINER: Invoking method: prepareDestroy on Singleton EJB(ejbs.EJBClassSingleton@1e2ef3e) using args: null
+févr. 11, 2014 6:48:50 PM org.isima.ejb.container.SingletonProxyFactory setState
+INFO: Changing Singleton state to Killed on EJB(ejbs.EJBClassSingleton@1e2ef3e)
+févr. 11, 2014 6:48:50 PM org.isima.ejb.container.SingletonProxyFactory setState
+INFO: Invoking Singleton PreDestroy method on EJB(ejbs.EJBClassSingleton@1e2ef3e)
