@@ -38,7 +38,7 @@ public class EJBContainerTester {
 		ejbStateless.aBusinessMethod();
 		ejbSingleton.aBusinessMethod();
 
-		Thread.sleep(5000); //To see the passivating and activating on stateful, and killing on stateless
+		Thread.sleep(7000); //To see the passivating and activating on stateful, and killing on stateless
 		ejbStateful.aBusinessMethod();
 		Thread.sleep(4000);
 		

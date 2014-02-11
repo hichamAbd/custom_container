@@ -34,7 +34,7 @@ public class StatefulProxyFactory implements InvocationHandler {
 	private final Logger logger;
 	private static final Level level = Level.ALL;
 	
-	private static final long PASSIVATING_DELAY_SECONDS = 40l;
+	private static final long PASSIVATING_DELAY_SECONDS = 4l;
 	private static final String STATEFUL_READY_STATE = "ready";
 	private static final String STATEFUL_PASSIVE_STATE = "passive";
 	private static final String STATEFUL_KILLED_STATE = "killed";
