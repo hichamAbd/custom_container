@@ -458,7 +458,7 @@ h1, h2, h3, p { margin: 0; }
   --m-wild: linear-gradient(135deg, #ff3fd5, #7a3cff 55%, #2ee8ff);
   --m-art:
     linear-gradient(transparent 62%, rgba(255, 63, 213, 0.35) 62.5%, transparent 63.5%) 0 0 / 100% 100%,
-    radial-gradient(circle at 50% 70%, #ffd23f 0 18%, #ff3fd5 19% 26%, transparent 46%),
+    radial-gradient(circle at 21% 47%, #ffd23f 0 52px, #ff3fd5 54px 68px, transparent 118px),
     linear-gradient(180deg, #170336 0%, #5a0f6e 55%, #ff3fd5 120%);
 }
 [data-machine="dragon"] {
