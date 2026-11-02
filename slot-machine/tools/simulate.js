@@ -43,6 +43,7 @@ function simulate(cfg) {
   const s = {
     bet: 0, base: 0, scatter: 0, free: 0, fire: 0, fireCount: 0, jackpot: 0,
     hits: 0, fsTriggers: 0, fsSpins: 0, fsWinX: [], tiers: {}, tierPaid: {},
+    holdCash: 0, holdTriggers: 0, holdCoins: 0, holdFull: 0,
     maxX: 0, sumSq: 0, buckets: { big: 0, mega: 0, epic: 0, legendary: 0 }, cascades: 0
   };
   m.jackpot.tiers.forEach(function (t) { s.tiers[t.id] = 0; s.tierPaid[t.id] = 0; });
@@ -65,6 +66,14 @@ function simulate(cfg) {
       s.tiers[res.jackpot]++;
       s.tierPaid[res.jackpot] += amt;
       spinTotal += amt;
+      if (res.holdSpin) {
+        const cash = Math.round(res.holdSpin.cashX * bet);
+        s.holdCash += cash;
+        s.holdTriggers++;
+        s.holdCoins += res.holdSpin.coins.length;
+        if (res.holdSpin.full) s.holdFull++;
+        spinTotal += cash;
+      }
     }
     if (res.scatter.spins) {
       s.fsTriggers++;
@@ -91,7 +100,7 @@ function report(r) {
   const m = r.m;
   const s = r.s;
   const bet = r.bet;
-  const total = s.base + s.scatter + s.free + s.jackpot;
+  const total = s.base + s.scatter + s.free + s.jackpot + s.holdCash;
   const nonJackpot = (s.base + s.scatter + s.free) / s.bet;
   const mean = total / s.bet;
   const sd = Math.sqrt(s.sumSq / spins - mean * mean);
@@ -105,7 +114,8 @@ function report(r) {
   console.log('    base game wins ..... ' + pct(s.base / s.bet));
   console.log('    scatter pays ....... ' + pct(s.scatter / s.bet));
   console.log('    free spins ......... ' + pct(s.free / s.bet));
-  console.log('    jackpots ........... ' + pct(s.jackpot / s.bet) + '   (engine estimate ' + pct(est.jackpot) + ')');
+  console.log('    jackpots ........... ' + pct((s.jackpot + s.holdCash) / s.bet) + '   (engine estimate ' + pct(est.jackpot) + ')');
+  if (m.holdSpin) console.log('      of which Hold & Spin cash ' + pct(s.holdCash / s.bet) + ', avg ' + (s.holdTriggers ? (s.holdCash / s.holdTriggers / bet).toFixed(2) : 0) + 'x bet per round, avg ' + (s.holdTriggers ? (s.holdCoins / s.holdTriggers).toFixed(1) : 0) + ' coins, grid filled ' + s.holdFull + ' times');
   console.log('  Non-jackpot RTP ...... ' + pct(nonJackpot) + '   <- rtp.base in machines.js is ' + pct(m.rtp.base));
   console.log('  Hit frequency ........ ' + pct(s.hits / spins) + ' of spins pay something');
   console.log('  Free spins ........... ' + oneIn(s.fsTriggers, spins) + ', avg ' + fsAvg.toFixed(1) + 'x bet, median ' + fsMedian.toFixed(1) + 'x, avg ' + (s.fsTriggers ? (s.fsSpins / s.fsTriggers).toFixed(1) : 0) + ' spins');
@@ -122,7 +132,7 @@ function report(r) {
     + ' | epic 50x+ ' + oneIn(s.buckets.epic + s.buckets.legendary, spins)
     + ' | legendary 100x+ ' + oneIn(s.buckets.legendary, spins));
   console.log('  Biggest single spin .. ' + s.maxX.toFixed(0) + 'x bet   volatility (sd) ' + sd.toFixed(1));
-  return nonJackpot;
+  return { base: nonJackpot, holdCash: s.holdTriggers ? s.holdCash / s.holdTriggers / bet : null };
 }
 
 const results = {};
@@ -138,8 +148,11 @@ if (update) {
   const file = path.join(__dirname, '..', 'js', 'machines.js');
   let src = fs.readFileSync(file, 'utf8');
   Object.keys(results).forEach(function (id) {
-    const re = new RegExp("(id: '" + id + "'[\\s\\S]*?rtp: \\{ base: )([0-9.]+)( \\})");
-    src = src.replace(re, function (_, a, __, c) { return a + results[id].toFixed(4) + c; });
+    const r = results[id];
+    const re = new RegExp("(id: '" + id + "'[\\s\\S]*?rtp: \\{ )base: [0-9.]+(?:, holdCash: [0-9.]+)?( \\})");
+    src = src.replace(re, function (_, a, c) {
+      return a + 'base: ' + r.base.toFixed(4) + (r.holdCash != null ? ', holdCash: ' + r.holdCash.toFixed(3) : '') + c;
+    });
   });
   fs.writeFileSync(file, src);
   console.log('\nUpdated rtp.base in js/machines.js');

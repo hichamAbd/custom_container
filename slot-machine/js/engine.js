@@ -206,9 +206,11 @@
   // `m.rtp.base` (lines/ways/clusters + scatters + free spins + features) is
   // measured by tools/simulate.js; the jackpot part is exact.
   function estimateRtp(m, factor) {
-    const ps = jackpotChances(m, factor).ps;
+    const ch = jackpotChances(m, factor);
     let jp = 0;
-    m.jackpot.tiers.forEach(function (t, i) { jp += ps[i] * t.seed + t.growth; });
+    m.jackpot.tiers.forEach(function (t, i) { jp += ch.ps[i] * t.seed + t.growth; });
+    // Cash coins collected in the Hold & Spin jackpot game (measured per trigger).
+    if (m.holdSpin && m.rtp.holdCash) jp += ch.total * m.rtp.holdCash;
     return { base: m.rtp.base, jackpot: jp, total: m.rtp.base + jp };
   }
 
@@ -394,6 +396,55 @@
     return L.start + idx * L.step; // linear ladder {start, step}
   }
 
+  /* -------------------------------------------------------- hold & spin */
+
+  /*
+   * Builds a Hold & Spin round for a jackpot that was already decided.
+   * The trigger coins are held, every empty cell can land a coin on each
+   * respin, any landing resets the respins, and only the Grand fills the
+   * grid. The won jackpot (Mini/Minor/Major) is printed on one coin; all
+   * other coins carry cash worth `v` times the bet.
+   */
+  function holdAndSpin(m, tier, startCells, rng) {
+    const hs = m.holdSpin;
+    const total = m.reels * m.rows;
+    const grand = tier === 'grand';
+    const p = grand ? hs.grandLand : hs.land;
+    const held = {};
+    const order = [];
+    const landedOrder = [];
+    function addCoin(r, h, initial) {
+      const c = { r: r, h: h, v: pickWeighted(hs.values, rng), jp: null };
+      held[key(m, r, h)] = c;
+      order.push(c);
+      if (!initial) landedOrder.push(c);
+      return c;
+    }
+    const start = startCells.map(function (c) { return addCoin(c[0], c[1], true); });
+    const steps = [];
+    let respins = hs.respins;
+    while (respins > 0 && order.length < total) {
+      const empty = [];
+      for (let r = 0; r < m.reels; r++) for (let h = 0; h < m.rows; h++) if (!held[key(m, r, h)]) empty.push([r, h]);
+      let landed = empty.filter(function () { return rng() < p; });
+      if (!grand && order.length + landed.length >= total) landed = landed.slice(0, total - 1 - order.length);
+      if (grand && !landed.length && respins === 1) landed = [empty[Math.floor(rng() * empty.length)]];
+      const step = { landed: landed.map(function (c) { return addCoin(c[0], c[1], false); }), respins: 0 };
+      respins = step.landed.length ? hs.respins : respins - 1;
+      step.respins = respins;
+      steps.push(step);
+    }
+    if (!grand) {
+      const pool = landedOrder.length && rng() < 0.75 ? landedOrder : order;
+      const c = pool[Math.floor(rng() * pool.length)];
+      c.jp = tier;
+      c.v = 0;
+    }
+    let cashX = 0;
+    order.forEach(function (c) { cashX += c.v; });
+    return { tier: tier, start: start, steps: steps, coins: order, cashX: cashX, full: order.length === total, respins: hs.respins };
+  }
+
   /* ----------------------------------------------------------------- spin */
 
   /*
@@ -428,6 +479,8 @@
       const count = jackpot ? pickWeighted(m.jackpot.hitCoins, rng) : pickWeighted(m.jackpot.teaseCoins, rng);
       coinCells = placeCoins(m, grid, count, blocked, rng);
     }
+
+    const holdSpin = jackpot && m.holdSpin ? holdAndSpin(m, jackpot, coinCells, rng) : null;
 
     let fire = null;
     let preFireGrid = null;
@@ -516,6 +569,7 @@
       scatter: { count: sc, cells: scatterCells, finalCells: finalScatters, pay: scatterPay, spins: spinsAwarded },
       coins: { count: coinCells.length, cells: coinCells, finalCells: finalCoins },
       jackpot: jackpot,
+      holdSpin: holdSpin,
       newSticky: newSticky,
       ladderAfter: m.mode === 'cluster' ? ladderIdx : null,
       multiplier: mult,
@@ -579,6 +633,7 @@
     growPools: growPools,
     awardJackpot: awardJackpot,
     estimateRtp: estimateRtp,
+    holdAndSpin: holdAndSpin,
     winTier: winTier,
     WIN_TIERS: WIN_TIERS,
     pick: pick,

@@ -282,6 +282,43 @@
     coins: function () {
       for (let i = 0; i < 10; i++) sfx.clinkAt(i * 0.05 + Math.random() * 0.03);
     },
+    flip: function () {
+      hiss({ type: 'bandpass', f: 1800, to: 4200, d: 0.08, v: 0.12, q: 2 });
+      tone({ type: 'triangle', f: 660, to: 990, d: 0.08, v: 0.06 });
+    },
+    reveal: function (level) {
+      const f = midi(72 + [0, 4, 7, 12][Math.min(3, level)]);
+      tone({ type: 'triangle', f: f, d: 0.35, v: 0.14 });
+      tone({ type: 'sine', f: f * 2, d: 0.25, v: 0.06 }, 0.03);
+    },
+    countdown: function (last) {
+      tone({ type: 'square', f: last ? 1320 : 880, d: last ? 0.5 : 0.18, v: 0.07, filter: { f: 3000 } });
+    },
+    launch: function () {
+      hiss({ type: 'lowpass', f: 300, to: 3000, d: 1.6, v: 0.42, q: 0.7 });
+      tone({ type: 'sawtooth', f: 70, to: 220, d: 1.6, v: 0.12, filter: { f: 900 } });
+    },
+    sputter: function () {
+      for (let i = 0; i < 4; i++) hiss({ type: 'lowpass', f: 700, d: 0.07, v: 0.22 }, i * 0.11);
+    },
+    fall: function () {
+      tone({ type: 'triangle', f: 700, to: 160, d: 0.7, v: 0.1 });
+    },
+    level: function (i) {
+      [0, 4, 7, 12].forEach(function (s, k) { tone({ type: 'sine', f: midi(67 + i * 3 + s), d: 0.4, v: 0.1 }, k * 0.06); });
+    },
+    dud: function () {
+      tone({ type: 'sine', f: 160, to: 90, d: 0.12, v: 0.18 });
+    },
+    levelUp: function () {
+      [0, 4, 7, 12, 16, 19, 24].forEach(function (s, i) { tone({ type: 'square', f: midi(60 + s), d: 0.22, v: 0.05, filter: { f: 3800 } }, i * 0.07); });
+      tone({ type: 'sine', f: 120, to: 40, d: 0.4, v: 0.4 }, 0.5);
+      hiss({ type: 'highpass', f: 6000, d: 1.2, v: 0.08, a: 0.2 }, 0.45);
+    },
+    chest: function () {
+      hiss({ type: 'bandpass', f: 300, to: 2400, d: 0.4, v: 0.2 });
+      for (let i = 0; i < 8; i++) tone({ type: 'sine', f: midi(79 + PENTA[i % 8]), d: 0.3, v: 0.07 }, 0.25 + i * 0.05);
+    },
     clinkAt: function (dt) {
       const f = 2400 + Math.random() * 1800;
       tone({ type: 'sine', f: f, d: 0.1, v: 0.05 }, dt);

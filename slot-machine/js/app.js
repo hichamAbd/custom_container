@@ -1,13 +1,17 @@
 /*
  * Reel Riot - game controller: lobby, machines, reel animation, win
- * presentation, features, overlays, the Control Room and saving.
+ * presentation, mascots, features, jackpot games, levels and rewards,
+ * the Control Room and saving.
  */
 (function () {
   'use strict';
 
   const E = window.SlotEngine;
+  const P = window.SlotProgress;
   const Sound = window.SlotSound;
   const FX = window.SlotFX;
+  const Mascots = window.SlotMascots;
+  const Bonus = window.SlotBonus;
   const LIST = window.SlotMachines.list.map(function (cfg) { return E.compile(cfg); });
   const MACH = {};
   LIST.forEach(function (m) { MACH[m.id] = m; });
@@ -15,26 +19,27 @@
   const BETS = [1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6, 2e6, 5e6, 1e7, 2e7, 5e7, 1e8, 2.5e8, 5e8, 1e9];
   const DEFAULT_BET = 6; // 100K
   const START_COINS = 1e7;
-  const REFILL = 1e7;
   const MAX_COINS = 1e15;
-  const BONUS_EVERY = 10 * 60 * 1000;
   const JP_LOG_MIN = -1.7;
   const JP_LOG_MAX = 1.7;
   const FRAME_PAD = 12;
   const SAVE_KEY = 'reel-riot-v1';
-  const TIER_COLORS = { mini: '#1fbf63', minor: '#1a8fe0', major: '#8f3ee8', grand: '#e01e2e' };
   const LINE_COLORS = ['#ff3d6e', '#2ee8ff', '#ffd84d', '#4dff9a', '#b867ff', '#ff8a3d', '#ff4fd8', '#7dd3fc', '#a3e635', '#f472b6'];
-  const JP_WHEEL = ['mini', 'minor', 'mini', 'major', 'mini', 'minor', 'mini', 'grand', 'mini', 'minor', 'mini', 'major'];
-  const BONUS_WHEEL = [
-    { v: 1e6, w: 18, c: '#e0157a' }, { v: 2.5e6, w: 14, c: '#6a2ee8' }, { v: 5e5, w: 20, c: '#0fa3c9' },
-    { v: 5e6, w: 10, c: '#e08a00' }, { v: 1e6, w: 18, c: '#e0157a' }, { v: 1e7, w: 6, c: '#6a2ee8' },
-    { v: 2.5e6, w: 12, c: '#0fa3c9' }, { v: 2.5e7, w: 2, c: '#d01c1c' }
-  ];
+  const WHEEL_COLORS = ['#e0157a', '#6a2ee8', '#0fa3c9', '#e08a00', '#e0157a', '#6a2ee8', '#0fa3c9', '#d01c1c'];
+  const GAME_NAMES = { pick: 'Jackpot Pick', holdspin: 'Hold & Spin', rocket: 'Rocket Jackpot' };
   const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  // What each host says. Short lines only; they live in a speech bubble.
+  const LINES = {
+    neon: { hello: 'Let’s get juicy!', win: ['Fresh!', 'Juicy!', 'Ka-ching!', 'Nice beat!'], big: ['Turn it up!', 'Drop the beat!', 'Fruit party!'], antic: ['Come on...', 'Wait for it...', 'One more!'], lose: ['Shake it off!', 'Next track!', 'Keep grooving!'] },
+    dragon: { hello: 'Ready to raid the hoard?', win: ['Shiny!', 'Gold!', 'Mine!', 'Ooh, treasure!'], big: ['ROAR!', 'Hot stuff!', 'Hoard it!'], antic: ['I smell gold...', 'Come on...', 'Almost!'], lose: ['Grr. Again!', 'Sleep it off...', 'Next time!'] },
+    cosmic: { hello: 'Greetings, earthling!', win: ['Stellar!', 'Beep boop!', 'Nice orbit!'], big: ['Out of this world!', 'Warp speed!', 'Supernova!'], antic: ['Scanning...', 'Signal detected...', 'So close!'], lose: ['Recalculating...', 'Try another orbit', 'Bleep. Again!'] }
+  };
 
   const rng = E.makeRng();
   const $ = function (s, el) { return (el || document).querySelector(s); };
   const $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  const pickOne = function (a) { return a[Math.floor(Math.random() * a.length)]; };
 
   /* ------------------------------------------------------------ helpers */
 
@@ -62,6 +67,13 @@
     const t = document.createElement('div');
     t.innerHTML = html;
     return t.firstElementChild;
+  }
+  function clock(ms) {
+    const s = Math.ceil(ms / 1000);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor(s / 60) % 60;
+    const sec = s % 60;
+    return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(sec).padStart(2, '0');
   }
   const easeOut = function (p) { return 1 - Math.pow(1 - p, 3); };
   const easeOutQuad = function (p) { return 1 - (1 - p) * (1 - p); };
@@ -178,7 +190,7 @@
     el.textContent = msg;
     el.className = 'toast show' + (bad ? ' bad' : '');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.className = 'toast'; }, 2400);
+    toastTimer = setTimeout(function () { el.className = 'toast'; }, 2600);
   }
   function buzz(p) {
     if (!state.settings.vibrate) return;
@@ -192,6 +204,10 @@
     setTimeout(function () { el.classList.remove('shake'); }, 600);
   }
 
+  // Shared with the bonus games (js/bonus.js).
+  window.RR = window.RR || {};
+  window.RR.util = { $: $, $$: $$, fmt: fmt, short: short, clamp: clamp, sleep: sleep, tween: tween, waitTap: waitTap, rollTo: rollTo, setText: setText, bump: bump, buzz: buzz, flash: flash, shake: shake, toast: toast, easeOut: easeOut };
+
   /* -------------------------------------------------------------- state */
 
   function freshStats() {
@@ -202,13 +218,13 @@
     const bets = {};
     LIST.forEach(function (m) { pools[m.id] = E.createPools(m); bets[m.id] = DEFAULT_BET; });
     return {
-      v: 1,
+      v: 2,
       balance: START_COINS,
       bets: bets,
       pools: pools,
       settings: { jackpotLog: 0, sound: true, music: true, vibrate: true, turbo: false, muted: false },
       stats: freshStats(),
-      bonusAt: 0,
+      progress: P.fresh(),
       pendingFs: null,
       last: null
     };
@@ -233,7 +249,7 @@
     ['spins', 'wagered', 'won', 'biggest', 'biggestX', 'freeSpins'].forEach(function (k) { if (num(ss[k])) d.stats[k] = ss[k]; });
     if (typeof ss.biggestOn === 'string') d.stats.biggestOn = ss.biggestOn.slice(0, 40);
     if (ss.jackpots) Object.keys(d.stats.jackpots).forEach(function (k) { if (num(ss.jackpots[k])) d.stats.jackpots[k] = ss.jackpots[k]; });
-    if (num(s.bonusAt)) d.bonusAt = Math.min(s.bonusAt, Date.now() + BONUS_EVERY);
+    d.progress = P.normalize(s.progress);
     if (typeof s.last === 'string' && MACH[s.last]) d.last = s.last;
     const pf = s.pendingFs;
     if (pf && MACH[pf.machine] && pf.fs && num(pf.fs.spins) && num(pf.fs.played) && num(pf.fs.bet) && num(pf.fs.total) &&
@@ -264,9 +280,11 @@
     screen: 'lobby', m: null, busy: false, spinning: false, quick: false, cascading: false,
     auto: 0, autoTimer: 0, anims: [], reelEls: [], grid: null, cw: 60, ch: 60, gap: 4, laidOut: '',
     cache: {}, cycle: 0, fs: null, shown: 0, winShown: 0, sticky: [], layoutPending: false,
-    wheelRot: 0, oddsId: 'neon', force: null, modal: null, tapper: null, hint: 0, lastWins: []
+    wheelRot: 0, oddsId: 'neon', force: null, modal: null, tapper: null, hint: 0, lastWins: [],
+    mascot: null, losses: 0, levelUps: [], dailyPrompted: '', tab: 'odds'
   };
 
+  const prog = function () { return state.progress; };
   const betOf = function (m) { return BETS[state.bets[m.id]]; };
   const jpFactor = function () { return Math.pow(10, state.settings.jackpotLog); };
 
@@ -282,6 +300,67 @@
   }
   function addShown(delta, ms) { showBalance(rt.shown + delta, ms); }
   function syncShown() { if (Math.round(rt.shown) !== Math.round(state.balance)) showBalance(state.balance, 400); }
+  function credit(amount) { state.balance = Math.min(MAX_COINS, state.balance + amount); }
+  // Level-up coins are already in the balance but not shown until celebrated.
+  function pendingCoins() { return rt.levelUps.reduce(function (a, u) { return a + u.coins; }, 0); }
+
+  /* ------------------------------------------------------------- levels */
+
+  function renderLevel() {
+    const p = prog();
+    const need = P.xpNeeded(p.level);
+    const pct = p.level >= P.MAX_LEVEL ? 100 : Math.floor(p.xp / need * 100);
+    const alert = rewardsWaiting();
+    $$('.lvl-badge').forEach(function (b) {
+      b.style.setProperty('--p', pct);
+      const n = $('.lvl-num', b);
+      if (n) n.textContent = String(p.level);
+      let dot = $('.lvl-alert', b);
+      if (alert && !dot) { dot = document.createElement('span'); dot.className = 'lvl-alert'; b.appendChild(dot); }
+      if (!alert && dot) dot.remove();
+    });
+    const perk = 'Level bonus: free coin rewards +' + Math.round((P.levelMult(p.level) - 1) * 100) + '%';
+    [['#lobby-lvl', '#lobby-xp', '#lobby-xpbar', '#lobby-perk'], ['#ms-lvl', '#ms-xp', '#ms-xpbar', '#ms-perk']].forEach(function (ids) {
+      $(ids[0]).textContent = String(p.level);
+      $(ids[1]).textContent = fmt(p.xp) + ' / ' + fmt(need) + ' XP';
+      $(ids[2]).style.setProperty('--p', pct);
+      $(ids[3]).textContent = p.level > 1 ? perk : 'Level up for bigger free coin rewards';
+    });
+    $('#btn-level').setAttribute('aria-label', 'Level ' + p.level + '. Open missions');
+  }
+
+  function rewardsWaiting() {
+    const p = prog();
+    P.ensureMissions(p);
+    return p.missions.list.some(function (m) { return m.done && !m.claimed; }) || P.chestStatus(p).ready;
+  }
+
+  // Adds XP; level-up coins are credited now and celebrated later.
+  function gainXp(amount) {
+    const ups = P.addXp(prog(), amount);
+    ups.forEach(function (u) { credit(u.coins); rt.levelUps.push(u); });
+    renderLevel();
+    if (ups.length) bump($('#btn-level'), 'ding');
+    return ups;
+  }
+
+  async function showLevelUps() {
+    if (!rt.levelUps.length) return;
+    const ups = rt.levelUps.splice(0);
+    const coins = ups.reduce(function (a, u) { return a + u.coins; }, 0);
+    const to = ups[ups.length - 1].level;
+    const from = ups[0].level - 1;
+    await rewardScene({
+      kicker: 'Level up!',
+      big: String(to),
+      title: from + 1 === to ? 'You reached level ' + to : 'Levels ' + (from + 1) + ' to ' + to,
+      amount: coins,
+      sub: 'Free coin rewards are now +' + Math.round((P.levelMult(to) - 1) * 100) + '%',
+      mascot: rt.m ? rt.m.id : 'neon',
+      sound: 'levelUp'
+    });
+    addShown(coins, 700);
+  }
 
   /* -------------------------------------------------------------- lobby */
 
@@ -291,13 +370,13 @@
       const bars = [1, 2, 3].map(function (i) { return '<i' + (i <= m.volatility ? ' class="on"' : '') + '></i>'; }).join('');
       const meta = m.mode === 'lines' ? m.lines.length + ' paylines' : m.mode === 'ways' ? fmt(Math.pow(m.rows, m.reels)) + ' ways' : 'Cluster pays';
       return '<button type="button" class="cab" data-machine="' + m.id + '" data-id="' + m.id + '" aria-label="Play ' + m.name + '">' +
-        '<span class="cab-art"><span class="cab-icons" aria-hidden="true">' + m.art.map(function (g) { return '<span>' + g + '</span>'; }).join('') + '</span>' +
+        '<span class="cab-art"><span class="cab-mascot">' + Mascots.html(m.id) + '</span>' +
         '<span class="cab-title">' + m.name + '</span><span class="cab-grid">' + m.reels + ' &times; ' + m.rows + ' &middot; ' + meta + '</span>' +
         '<span class="cab-pending" hidden>Free spins waiting</span></span>' +
         '<span class="cab-body">' +
         '<span class="cab-row"><span class="cab-meta">' + m.tagline + '</span><span class="cab-vol" title="Volatility">' + vol[m.volatility - 1] + ' risk ' + bars + '</span></span>' +
         '<span class="cab-grand"><span class="cab-grand-label">Grand</span><span class="cab-grand-val fit" data-grand="' + m.id + '">0</span></span>' +
-        '<span class="cab-feats">' + m.features.map(function (f) { return '<span>' + f + '</span>'; }).join('') + '</span>' +
+        '<span class="cab-feats">' + m.features.map(function (f) { return '<span>' + f + '</span>'; }).join('') + '<span>Jackpot game: ' + GAME_NAMES[m.jackpot.game] + '</span></span>' +
         '<span class="cab-play">Play</span></span></button>';
     }).join('');
     $$('#cabinets .cab').forEach(function (b) {
@@ -312,8 +391,9 @@
       setText(el, fmt(state.pools[m.id].grand * betOf(m)));
       $('.cab[data-id="' + m.id + '"] .cab-pending').hidden = !(state.pendingFs && state.pendingFs.machine === m.id);
     });
-    showBalance(state.balance);
-    updateBonus();
+    showBalance(state.balance - pendingCoins());
+    renderLevel();
+    renderRewardButtons();
     const s = state.stats;
     const jp = s.jackpots.mini + s.jackpots.minor + s.jackpots.major + s.jackpots.grand;
     $('#lobby-stats').textContent = s.spins
@@ -321,20 +401,31 @@
       : 'Coins are for fun and have no cash value. Jackpots are rare by design; the Control Room lets you change that.';
   }
 
-  function updateBonus() {
-    const btn = $('#btn-bonus');
-    const left = state.bonusAt - Date.now();
-    if (left <= 0) {
-      btn.classList.add('ready');
-      btn.classList.remove('waiting');
-      setText($('#bonus-text'), 'Spin the free coin wheel');
-    } else {
-      btn.classList.remove('ready');
-      btn.classList.add('waiting');
-      const mm = Math.floor(left / 60000);
-      const ss = Math.floor(left / 1000) % 60;
-      setText($('#bonus-text'), 'Free coin wheel in ' + mm + ':' + String(ss).padStart(2, '0'));
-    }
+  function renderRewardButtons() {
+    const p = prog();
+    const d = P.dailyStatus(p);
+    const daily = $('#rw-daily');
+    daily.classList.toggle('ready', d.claimable);
+    setText($('#rw-daily-sub'), d.claimable ? 'Day ' + d.day + ' ready' : 'Next in ' + clock(P.msToNextDay(p)));
+    P.ensureMissions(p);
+    const doneCount = p.missions.list.filter(function (m) { return m.done; }).length;
+    const ms = $('#rw-missions');
+    ms.classList.toggle('ready', rewardsWaiting());
+    setText($('#rw-missions-sub'), rewardsWaiting() ? 'Reward ready' : doneCount + ' of 3 done');
+    const coinsReady = P.isReady(p, 'coins');
+    $('#rw-coins').classList.toggle('ready', coinsReady);
+    setText($('#rw-coins-sub'), coinsReady ? 'Collect ' + short(P.freeCoinsAmount(p)) : 'In ' + clock(P.timeLeft(p, 'coins')));
+    const wheelReady = P.isReady(p, 'wheel');
+    $('#rw-wheel').classList.toggle('ready', wheelReady);
+    setText($('#rw-wheel-sub'), wheelReady ? 'Spin now' : 'In ' + clock(P.timeLeft(p, 'wheel')));
+  }
+
+  function maybePromptDaily() {
+    const p = prog();
+    const d = P.dailyStatus(p);
+    if (!d.claimable || rt.dailyPrompted === d.today || rt.screen !== 'lobby' || rt.busy || rt.modal) return;
+    rt.dailyPrompted = d.today;
+    setTimeout(function () { if (rt.screen === 'lobby' && !rt.modal && !rt.busy) openDaily(); }, 700);
   }
 
   /* ------------------------------------------------------- machine view */
@@ -342,6 +433,9 @@
   function enterMachine(id) {
     if (rt.busy || !MACH[id]) return;
     const m = MACH[id];
+    stopCycle();
+    stopAuto();
+    rt.lastWins = [];
     rt.m = m;
     $('#app').dataset.machine = id;
     state.last = id;
@@ -352,12 +446,16 @@
     $('#fs-extra').textContent = m.freeSpins.title;
     $('#fs-banner').hidden = true;
     $('#machine').classList.remove('in-fs');
+    $('#perch').innerHTML = Mascots.html(id);
+    rt.mascot = $('#perch .mascot');
+    rt.losses = 0;
     rt.laidOut = '';
     buildReels();
     buildLadder();
     clearSticky();
     clearHighlight();
     renderBet();
+    renderLevel();
     $$('.jp-val').forEach(function (el) { el._v = null; el._len = -1; });
     renderJackpots(false);
     $('#balance')._len = -1;
@@ -369,7 +467,8 @@
     requestAnimationFrame(function () { layout(); refit(); });
     Sound.music(id);
     save();
-    if (state.pendingFs && state.pendingFs.machine === id) setTimeout(resumeFreeSpins, 400);
+    setTimeout(function () { Mascots.say(rt.mascot, LINES[id].hello, 2200); Mascots.mood(rt.mascot, 'happy', 1000); }, 450);
+    if (state.pendingFs && state.pendingFs.machine === id) setTimeout(resumeFreeSpins, 600);
   }
 
   function leaveMachine() {
@@ -381,10 +480,13 @@
     $('#lobby').hidden = false;
     rt.screen = 'lobby';
     rt.m = null;
+    rt.mascot = null;
+    $('#perch').innerHTML = '';
     renderLobby();
     requestAnimationFrame(refit);
     Sound.music('lobby');
     save();
+    maybePromptDaily();
   }
 
   function layout() {
@@ -468,6 +570,42 @@
       const v = (hold && hold[t.id] != null ? hold[t.id] : pools[t.id]) * bet;
       rollTo($('#jp-' + t.id), v, animate ? 700 : 0);
     });
+  }
+
+  /* ------------------------------------------------------------ mascot */
+
+  function react(kind, info) {
+    const el = rt.mascot;
+    if (!el || !rt.m) return;
+    const lines = LINES[rt.m.id];
+    if (kind === 'antic') {
+      Mascots.mood(el, 'focus', 2600);
+      if (Math.random() < 0.7) Mascots.say(el, pickOne(lines.antic), 1600);
+    } else if (kind === 'win') {
+      rt.losses = 0;
+      const x = info.win / info.bet;
+      if (x >= 5) { Mascots.mood(el, 'cheer', 2000); Mascots.say(el, pickOne(lines.big), 1800); }
+      else if (x >= 1) { Mascots.mood(el, 'happy', 1100); if (Math.random() < 0.45) Mascots.say(el, pickOne(lines.win), 1400); }
+      else Mascots.mood(el, 'happy', 900);
+    } else if (kind === 'lose') {
+      rt.losses++;
+      if (rt.losses >= 6 && Math.random() < 0.5) {
+        rt.losses = 0;
+        Mascots.mood(el, 'sad', 1500);
+        Mascots.say(el, pickOne(lines.lose), 1600);
+      }
+    } else if (kind === 'fire') {
+      Mascots.mood(el, 'fire', 1700);
+      Mascots.say(el, 'ROAR!', 1300);
+    } else if (kind === 'beam') {
+      Mascots.mood(el, 'beam', 1000);
+    } else if (kind === 'jackpot') {
+      Mascots.mood(el, 'wow', 2600);
+      Mascots.say(el, 'JACKPOT!', 2000);
+    } else if (kind === 'scatter') {
+      Mascots.mood(el, 'wow', 1400);
+      Mascots.say(el, 'Free spins!', 1600);
+    }
   }
 
   /* -------------------------------------------------------------- reels */
@@ -575,6 +713,7 @@
       let stopped = 0;
       let sc = 0;
       let co = 0;
+      let reacted = false;
       rt.anims = [];
       for (let r = 0; r < R; r++) {
         const reel = rt.reelEls[r].reel;
@@ -614,6 +753,7 @@
           if (r + 1 < R && antic[r + 1] && !rt.quick) {
             rt.reelEls[r + 1].reel.classList.add('anticipate');
             Sound.anticipation(stops[r + 1] - stops[r]);
+            if (!reacted) { reacted = true; react('antic'); }
           }
           stopped++;
           if (stopped === R) {
@@ -703,9 +843,9 @@
   function hints(m) {
     return [
       m.scatter.label + ' start free spins',
-      'Land 3 jackpot coins to spin the Jackpot Wheel',
-      m.id === 'neon' ? 'Wilds land on reels 2, 3 and 4' : m.id === 'dragon' ? 'Dragon Fire can torch the reels with wilds' : 'Every cascade raises the multiplier',
-      'Bigger bets mean bigger jackpots'
+      '3 jackpot coins start the ' + GAME_NAMES[m.jackpot.game] + ' game',
+      m.id === 'neon' ? 'Wilds land on reels 2, 3 and 4' : m.id === 'dragon' ? 'Ember can breathe Dragon Fire on any spin' : 'Every cascade raises the multiplier',
+      'Every spin earns XP toward your next level'
     ];
   }
 
@@ -871,7 +1011,7 @@
         highlight(keys);
         $('#cabinet').classList.add('party');
         Sound.win(Math.min(2, i));
-        if (i > 0) Sound.multiplier(i);
+        if (i > 0) { Sound.multiplier(i); react('beam'); }
         buzz(12);
         running += st.win;
         rollWin(running, fast ? 350 : 700);
@@ -897,15 +1037,17 @@
 
   async function presentFire(res) {
     const cab = $('#cabinet');
+    react('fire');
     Sound.fire();
     buzz([30, 40, 70]);
+    await sleep(state.settings.turbo ? 200 : 420, false);
     shake();
     cab.classList.add('on-fire');
     const sweep = document.createElement('div');
     sweep.className = 'fire-sweep';
     $('#reel-fx').appendChild(sweep);
-    setMsg('Dragon Fire!', true);
-    await sleep(420, false);
+    setMsg('Ember breathes Dragon Fire!', true);
+    await sleep(380, false);
     for (let i = 0; i < res.fire.length; i++) {
       const r = res.fire[i][0];
       const h = res.fire[i][1];
@@ -946,6 +1088,7 @@
     else all = presentWins(res);
 
     if (res.win > 0) {
+      react('win', { win: res.win, bet: res.bet });
       const tier = E.winTier(res.win, res.bet);
       const big = tier && (!opts.free || tier.x >= 50);
       const target = (opts.free ? (m.mode === 'cluster' ? rt.winShown : rt.winShown + res.win) : res.win);
@@ -961,6 +1104,7 @@
       addShown(res.win, 450);
       if (res.capped) toast('Max win reached!');
     } else if (!opts.free) {
+      react('lose');
       const hs = hints(m);
       setMsg(hs[rt.hint++ % hs.length]);
     }
@@ -970,9 +1114,13 @@
   }
 
   function forcedResult(m, bet) {
-    const kind = rt.force;
+    let kind = rt.force;
     if (!kind) return null;
     rt.force = null;
+    renderForceNote();
+    if (kind === 'feature') kind = m.id === 'dragon' ? 'fire' : m.id === 'cosmic' ? 'cascade' : 'wilds';
+    const clean = function (r) { return !r.jackpot && !r.scatter.spins; };
+    const wilds = function (r) { let n = 0; r.grid.forEach(function (c) { c.forEach(function (s) { if (s === 'wild') n++; }); }); return n; };
     const tests = {
       fs: function (r) { return r.scatter.spins > 0; },
       jackpot: function (r) { return !!r.jackpot; },
@@ -980,14 +1128,15 @@
       minor: function (r) { return r.jackpot === 'minor'; },
       major: function (r) { return r.jackpot === 'major'; },
       grand: function (r) { return r.jackpot === 'grand'; },
-      big: function (r) { return r.win >= 10 * bet && r.win < 25 * bet && !r.jackpot && !r.scatter.spins; },
-      mega: function (r) { return r.win >= 25 * bet && r.win < 50 * bet && !r.jackpot && !r.scatter.spins; },
-      epic: function (r) { return r.win >= 50 * bet && r.win < 100 * bet && !r.jackpot && !r.scatter.spins; },
-      legendary: function (r) { return r.win >= 100 * bet && !r.jackpot && !r.scatter.spins; },
-      fire: function (r) { return !!r.fire && r.win > 0 && !r.jackpot && !r.scatter.spins; },
-      cascade: function (r) { return r.steps.length >= 4 && !r.jackpot && !r.scatter.spins; },
-      win: function (r) { return r.win > 0 && !r.jackpot && !r.scatter.spins; },
-      tease: function (r) { return !r.jackpot && r.coins.count === 2 && r.scatter.count === 2; }
+      big: function (r) { return r.win >= 10 * bet && r.win < 25 * bet && clean(r); },
+      mega: function (r) { return r.win >= 25 * bet && r.win < 50 * bet && clean(r); },
+      epic: function (r) { return r.win >= 50 * bet && r.win < 100 * bet && clean(r); },
+      legendary: function (r) { return r.win >= 100 * bet && clean(r); },
+      fire: function (r) { return !!r.fire && r.win > 2 * bet && clean(r); },
+      cascade: function (r) { return r.steps.length >= 4 && clean(r); },
+      wilds: function (r) { return wilds(r) >= 3 && r.win >= 3 * bet && clean(r); },
+      win: function (r) { return r.win > 0 && clean(r); },
+      tease: function (r) { return clean(r) && r.coins.count === 2 && r.scatter.count === 2; }
     };
     const test = tests[kind];
     if (!test) return null;
@@ -1014,10 +1163,12 @@
       st.spins++;
       st.wagered += bet;
       E.growPools(m, state.pools[m.id]);
+      gainXp(P.spinXp(bet));
       const res = forcedResult(m, bet) || E.spin(m, { mode: 'base', bet: bet, jackpotFactor: jpFactor() }, rng);
       let jp = 0;
       let hold = null;
       let poolsView = null;
+      const cash = res.holdSpin ? Math.round(res.holdSpin.cashX * bet) : 0;
       if (res.jackpot) {
         hold = {};
         hold[res.jackpot] = state.pools[m.id][res.jackpot];
@@ -1031,24 +1182,49 @@
         state.pendingFs = { machine: m.id, fs: fs };
         st.freeSpins++;
       }
-      state.balance = Math.min(MAX_COINS, state.balance + res.win + jp);
-      st.won += res.win + jp;
-      track(res.win + jp, bet, m);
+      credit(res.win + jp + cash);
+      st.won += res.win + jp + cash;
+      track(res.win + jp + cash, bet, m);
       save();
       addShown(-bet, 250);
       renderJackpots(true, hold);
       await playResult(res, {});
-      if (res.jackpot) await jackpotSequence(res, jp, poolsView);
+      if (res.jackpot) await jackpotSequence(res, jp, cash, poolsView);
       if (fs) {
         await celebrateScatters(res);
         await runFreeSpins(fs, false);
       }
+      const done = P.recordSpin(prog(), {
+        machine: m.id,
+        bet: bet,
+        total: res.win + jp + cash + (fs ? fs.total : 0),
+        bigWin: res.win + (fs ? fs.total : 0) >= 10 * bet,
+        freeSpins: !!fs,
+        scatters: res.scatter.count,
+        coins: res.coins.count,
+        fire: !!res.fire,
+        cascades: m.mode === 'cluster' ? res.steps.filter(function (s) { return s.wins.length; }).length : 0
+      });
+      missionsCompleted(done);
+      await showLevelUps();
       syncShown();
     } finally {
       setBusy(false);
       save();
     }
     afterSpin();
+  }
+
+  function missionsCompleted(done) {
+    if (!done.length) return;
+    done.forEach(function (ms, i) {
+      setTimeout(function () {
+        toast('Mission complete: ' + P.describe(ms) + '. Claim it in Missions!');
+        Sound.retrigger();
+      }, i * 2700);
+    });
+    renderLevel();
+    bump($('#btn-level'), 'ding');
   }
 
   function afterSpin() {
@@ -1114,7 +1290,7 @@
       Sound.error();
       save();
     } else if (BETS[i] > state.balance) {
-      openModal('modal-broke');
+      openBroke();
     }
   }
 
@@ -1147,6 +1323,7 @@
       const p = cellPoint(c[0], c[1]);
       FX.burst(p.x, p.y, 'rgb(' + rgb(rt.m.symbols.scatter.color) + ')', 18, 280);
     });
+    react('scatter');
     Sound.scatter(5);
     buzz([20, 30, 20]);
     await sleep(1300);
@@ -1198,6 +1375,7 @@
     else toast('Welcome back! Finishing your free spins');
     $('#machine').classList.add('in-fs');
     $('#fs-banner').hidden = false;
+    Mascots.base(rt.mascot, 'dance');
     rt.winShown = fs.total;
     $('#winbar').classList.add('has-win');
     $('#win-label').textContent = 'Total win';
@@ -1210,7 +1388,7 @@
     while (!fs.done) {
       await sleep(state.settings.turbo ? 200 : 450, false);
       const res = E.freeSpin(m, fs, rng);
-      state.balance = Math.min(MAX_COINS, state.balance + res.win);
+      credit(res.win);
       state.stats.won += res.win;
       save();
       renderFs();
@@ -1225,6 +1403,7 @@
     await featureOutro(fs);
     $('#machine').classList.remove('in-fs');
     $('#fs-banner').hidden = true;
+    Mascots.base(rt.mascot, 'idle');
     clearSticky();
     rt.fs = null;
     renderBet();
@@ -1254,52 +1433,83 @@
     Sound.retrigger();
     toast('+' + res.scatter.spins + ' free spins!');
     bump($('#fs-banner'));
+    Mascots.say(rt.mascot, '+' + res.scatter.spins + ' spins!', 1500);
     FX.confetti(50);
     await sleep(1100);
     clearHighlight();
   }
 
+  function letters(el, text) {
+    el.innerHTML = text.split('').map(function (ch, i) {
+      return ch === ' ' ? ' ' : '<span class="ltr" style="--i:' + i + '">' + ch + '</span>';
+    }).join('');
+  }
+
+  function stageMascot(holder, id, mood) {
+    holder.innerHTML = Mascots.html(id);
+    const el = $('.mascot', holder);
+    Mascots.base(el, mood);
+    return el;
+  }
+
   async function featureIntro(fs) {
     const m = rt.m;
     const ov = $('#ov-feature');
+    stageMascot($('#ft-mascot'), m.id, 'dance');
     $('#ft-kicker').textContent = 'You won';
-    $('#ft-title').textContent = 'Free spins';
-    $('#ft-sub').textContent = m.freeSpins.title;
+    letters($('#ft-title'), 'Free spins');
+    const sub = $('#ft-sub');
+    sub.textContent = m.freeSpins.title;
+    bump(sub, 'stamp');
     $('#ft-btn').textContent = 'Start';
     ov.hidden = false;
     const big = $('#ft-big');
     big._len = -1;
     big._t = null;
-    setText(big, String(fs.spins));
-    bump(big, 'go');
+    setText(big, '0');
+    bump($('#ft-burst'), 'go');
     Sound.duck(true);
     Sound.freeSpins();
     flash();
-    FX.confetti(110);
+    FX.confetti(140);
+    FX.fireworks(2);
     buzz([20, 40, 20, 40, 60]);
+    let last = 0;
+    await tween(900, function (p) {
+      const v = Math.round(fs.spins * p);
+      if (v !== last) { last = v; Sound.tick(p); }
+      setText(big, String(v));
+    }, easeOut, false);
     await waitTap(ov, rt.auto ? 2200 : 9000);
     ov.hidden = true;
+    $('#ft-mascot').innerHTML = '';
     Sound.duck(false);
   }
 
   async function featureOutro(fs) {
     const ov = $('#ov-feature');
+    const tier = E.winTier(fs.total, fs.bet);
+    stageMascot($('#ft-mascot'), rt.m.id, tier ? 'cheer' : 'happy');
     $('#ft-kicker').textContent = 'Free spins complete';
-    $('#ft-title').textContent = 'Total win';
-    $('#ft-sub').textContent = (fs.total / fs.bet).toFixed(1) + '× your bet' + (fs.retriggers ? ' with ' + fs.retriggers + ' retrigger' + (fs.retriggers > 1 ? 's' : '') : '');
+    letters($('#ft-title'), tier ? tier.label : 'Total win');
+    const sub = $('#ft-sub');
+    sub.textContent = (fs.total / fs.bet).toFixed(1) + '× your bet' + (fs.retriggers ? ' with ' + fs.retriggers + ' retrigger' + (fs.retriggers > 1 ? 's' : '') : '');
+    bump(sub, 'stamp');
     $('#ft-btn').textContent = 'Collect';
     ov.hidden = false;
     const big = $('#ft-big');
     big._len = -1;
     big._t = null;
     setText(big, '0');
+    bump($('#ft-burst'), 'go');
     Sound.duck(true);
-    Sound.fanfare(1);
-    if (fs.total > 0) FX.coinShower(2.5, 22);
+    Sound.fanfare(tier ? 2 : 1);
+    if (fs.total > 0) { FX.coinShower(2.5, 22); FX.fountain(1.6, 20); }
     await tween(state.settings.turbo ? 1200 : 2400, function (p) { setText(big, fmt(fs.total * p)); }, easeOut);
-    if (E.winTier(fs.total, fs.bet)) { FX.fireworks(4); Sound.coins(); }
+    if (tier) { FX.fireworks(4); Sound.coins(); }
     await waitTap(ov, rt.auto ? 2000 : 9000);
     ov.hidden = true;
+    $('#ft-mascot').innerHTML = '';
     FX.stop();
     Sound.duck(false);
   }
@@ -1307,6 +1517,7 @@
   /* ---------------------------------------------------------- big wins */
 
   const RANK = { big: 0, mega: 1, epic: 2, legendary: 3 };
+  const TIER_MOOD = { big: 'cheer', mega: 'dance', epic: 'dance', legendary: 'dance' };
 
   async function bigWin(amount, bet, opts) {
     opts = opts || {};
@@ -1321,6 +1532,8 @@
     let cur = 'big';
     ov.className = 'overlay ov-bigwin ' + (opts.cls || 'tier-big');
     title.textContent = opts.title || 'Big win';
+    const host = stageMascot($('#bw-mascot'), opts.mascot || (rt.m ? rt.m.id : 'neon'), opts.title ? 'wow' : 'cheer');
+    if (opts.title) setTimeout(function () { Mascots.base(host, 'dance'); }, 700);
     ov.hidden = false;
     amt._len = -1;
     amt._t = null;
@@ -1339,7 +1552,8 @@
     await tween(dur, function (p) {
       const v = amount * p;
       setText(amt, fmt(v));
-      if (!opts.noX) xEl.textContent = (v / bet).toFixed(v / bet >= 100 ? 0 : 1) + '× bet';
+      if (opts.note) xEl.textContent = opts.note;
+      else if (!opts.noX) xEl.textContent = (v / bet).toFixed(v / bet >= 100 ? 0 : 1) + '× bet';
       if (!opts.title) {
         const t = E.winTier(v, bet);
         if (t && RANK[t.id] > RANK[cur]) {
@@ -1347,6 +1561,8 @@
           ov.className = 'overlay ov-bigwin tier-' + cur;
           title.textContent = t.label;
           bump(title);
+          Mascots.mood(host, 'wow', 650);
+          setTimeout(function () { Mascots.base(host, TIER_MOOD[cur]); }, 660);
           Sound.tierUp(RANK[cur]);
           FX.firework();
           buzz(40);
@@ -1360,6 +1576,59 @@
     $('#bw-hint').textContent = 'Tap to continue';
     await waitTap(ov, rt.auto ? 1600 : 6000);
     ov.hidden = true;
+    $('#bw-mascot').innerHTML = '';
+    FX.stop();
+    Sound.duck(false);
+  }
+
+  /* ------------------------------------------------------ reward scene */
+
+  const GIFT = '<span class="gift"><svg viewBox="0 0 120 120" aria-hidden="true">' +
+    '<rect x="18" y="54" width="84" height="58" rx="8" fill="#ff3d8b" stroke="#8f0a45" stroke-width="3"/>' +
+    '<rect x="52" y="54" width="16" height="58" fill="#ffd84d" stroke="#c98a00" stroke-width="2"/>' +
+    '<g class="gift-lid"><rect x="10" y="38" width="100" height="20" rx="6" fill="#ff6fae" stroke="#8f0a45" stroke-width="3"/>' +
+    '<rect x="52" y="38" width="16" height="20" fill="#ffd84d" stroke="#c98a00" stroke-width="2"/>' +
+    '<path d="M60 38C46 14 22 20 34 38ZM60 38C74 14 98 20 86 38Z" fill="#ffd84d" stroke="#c98a00" stroke-width="2.5" stroke-linejoin="round"/></g></svg></span>';
+
+  // A full-screen reward: level-ups, daily bonus, free coins, mission chest.
+  async function rewardScene(o) {
+    const ov = $('#ov-reward');
+    const art = $('#rw-art');
+    let host = null;
+    if (o.mascot) host = stageMascot(art, o.mascot, 'cheer');
+    else art.innerHTML = GIFT;
+    $('#rw-kicker').textContent = o.kicker;
+    const big = $('#rw-big');
+    big._len = -1;
+    big._t = null;
+    setText(big, o.big || '');
+    $('#rw-title').textContent = o.title || '';
+    $('#rw-sub').textContent = o.sub || '';
+    const amt = $('#rw-amount');
+    amt._len = -1;
+    amt._t = null;
+    setText(amt, o.amount ? '+0' : '');
+    $('#rw-btn').textContent = o.btn || 'Collect';
+    ov.hidden = false;
+    Sound.unlock();
+    Sound.duck(true);
+    if (o.sound === 'levelUp') Sound.levelUp(); else Sound.chest();
+    flash();
+    FX.confetti(90);
+    buzz([30, 40, 30]);
+    if (!host) setTimeout(function () { const g = $('.gift', art); if (g) g.classList.add('opened'); FX.coinsAt(innerWidth / 2, innerHeight * 0.32, 14); }, 650);
+    if (o.amount) {
+      FX.coinShower(1.8, 18);
+      let last = 0;
+      await tween(1300, function (p) {
+        setText(amt, '+' + fmt(o.amount * p));
+        const now = performance.now();
+        if (p < 1 && now - last > 80) { last = now; Sound.clink(); }
+      }, easeOut);
+    }
+    await waitTap(ov, rt.auto ? 1800 : 9000);
+    ov.hidden = true;
+    art.innerHTML = '';
     FX.stop();
     Sound.duck(false);
   }
@@ -1410,12 +1679,6 @@
       g.fillStyle = '#fff';
       g.strokeText(segs[i].label, 0, -r * 0.72);
       g.fillText(segs[i].label, 0, -r * 0.72);
-      if (segs[i].sub) {
-        g.font = '800 ' + Math.round(r * 0.08) + 'px "Barlow Condensed", "Arial Narrow", sans-serif';
-        g.fillStyle = '#fff3bf';
-        g.strokeText(segs[i].sub, 0, -r * 0.58);
-        g.fillText(segs[i].sub, 0, -r * 0.58);
-      }
       g.restore();
     }
     const rim = g.createLinearGradient(-r, -r, r, r);
@@ -1495,7 +1758,9 @@
     Sound.duck(false);
   }
 
-  async function jackpotSequence(res, amount, pools) {
+  /* ------------------------------------------------------ jackpot game */
+
+  async function jackpotSequence(res, amount, cash, pools) {
     const m = rt.m;
     const tier = m.jackpot.tiers.filter(function (t) { return t.id === res.jackpot; })[0];
     const coins = res.coins.finalCells;
@@ -1507,7 +1772,8 @@
     banner.className = 'jackpot-banner';
     banner.textContent = 'Jackpot!';
     $('#reel-fx').appendChild(banner);
-    setMsg('Jackpot coins! Spin the wheel', true);
+    setMsg('Jackpot coins! ' + GAME_NAMES[m.jackpot.game] + ' starts...', true);
+    react('jackpot');
     Sound.alarm();
     flash();
     shake();
@@ -1522,72 +1788,207 @@
     clearHighlight();
 
     const bet = res.bet;
-    const segs = JP_WHEEL.map(function (id) { return { label: id.toUpperCase(), sub: short(pools[id] * bet), color: TIER_COLORS[id] }; });
-    const cands = [];
-    JP_WHEEL.forEach(function (id, i) { if (id === res.jackpot) cands.push(i); });
-    let idx = cands[Math.floor(Math.random() * cands.length)];
-    let u = 0.2 + Math.random() * 0.6;
-    // A mini that stops right next to the grand makes for a good groan.
-    if (res.jackpot === 'mini' && Math.random() < 0.4) {
-      if (Math.random() < 0.5) { idx = 6; u = 0.86 + Math.random() * 0.1; } else { idx = 8; u = 0.04 + Math.random() * 0.1; }
-    }
-    await wheelOverlay({
-      title: 'Jackpot wheel',
-      sub: 'Tap anywhere to spin',
-      segs: segs,
-      idx: idx,
-      u: u,
-      result: tier.name + ' jackpot!'
-    });
+    const values = {};
+    m.jackpot.tiers.forEach(function (t) { values[t.id] = pools[t.id] * bet; });
+    const o = { tier: res.jackpot, values: values, bet: bet, auto: rt.auto > 0, turbo: !!state.settings.turbo, machine: m, hold: res.holdSpin };
+    if (m.jackpot.game === 'holdspin' && res.holdSpin) await Bonus.holdSpin(o);
+    else if (m.jackpot.game === 'rocket') await Bonus.rocket(o);
+    else await Bonus.pick(o);
+
     const meter = $('#jp-' + tier.id).closest('.jp');
     meter.classList.add('hit');
     setTimeout(function () { meter.classList.remove('hit'); }, 3200);
     const durs = { mini: 3200, minor: 4400, major: 6000, grand: 8500 };
     if (tier.id === 'grand' || tier.id === 'major') FX.confetti(tier.id === 'grand' ? 200 : 120);
-    Sound.jackpot(['mini', 'minor', 'major', 'grand'].indexOf(tier.id));
-    await bigWin(amount, bet, { title: tier.name + ' jackpot', cls: 'jp-' + tier.id, level: 3, duration: durs[tier.id], fireworks: tier.id === 'grand' ? 8 : tier.id === 'major' ? 5 : 2 });
-    addShown(amount, 600);
+    await bigWin(amount + cash, bet, {
+      title: tier.name + ' jackpot',
+      cls: 'jp-' + tier.id,
+      level: 3,
+      duration: durs[tier.id],
+      fireworks: tier.id === 'grand' ? 8 : tier.id === 'major' ? 5 : 2,
+      note: cash ? 'Jackpot ' + fmt(amount) + ' + coins ' + fmt(cash) : null
+    });
+    addShown(amount + cash, 600);
     renderJackpots(true);
-    rt.winShown = res.win + amount;
+    rt.winShown = res.win + amount + cash;
     rollWin(rt.winShown, 400);
     $('#win-label').textContent = 'Win + jackpot';
-    setMsg(tier.name + ' jackpot: ' + fmt(amount));
+    setMsg(tier.name + ' jackpot: ' + fmt(amount + cash));
   }
+
+  /* ----------------------------------------------------- free bonuses */
 
   async function bonusWheel() {
     if (rt.busy) return;
     Sound.unlock();
-    const left = state.bonusAt - Date.now();
-    if (left > 0) {
+    const p = prog();
+    if (!P.isReady(p, 'wheel')) {
       Sound.error();
-      toast('The free coin wheel comes back in ' + Math.ceil(left / 60000) + ' min');
+      toast('The bonus wheel is back in ' + clock(P.timeLeft(p, 'wheel')));
       return;
     }
     rt.busy = true;
     try {
+      const prizes = P.wheelPrizes(p);
       let total = 0;
-      BONUS_WHEEL.forEach(function (b) { total += b.w; });
+      prizes.forEach(function (b) { total += b.w; });
       let x = Math.random() * total;
       let idx = 0;
-      for (; idx < BONUS_WHEEL.length - 1; idx++) { if (x < BONUS_WHEEL[idx].w) break; x -= BONUS_WHEEL[idx].w; }
-      const prize = BONUS_WHEEL[idx].v;
-      state.bonusAt = Date.now() + BONUS_EVERY;
-      state.balance = Math.min(MAX_COINS, state.balance + prize);
+      for (; idx < prizes.length - 1; idx++) { if (x < prizes[idx].w) break; x -= prizes[idx].w; }
+      const prize = prizes[idx].v;
+      P.arm(p, 'wheel');
+      credit(prize);
       save();
+      renderRewardButtons();
       await wheelOverlay({
-        title: 'Free coin wheel',
+        title: 'Bonus wheel',
         sub: 'Tap anywhere to spin',
-        segs: BONUS_WHEEL.map(function (b) { return { label: short(b.v), color: b.c }; }),
+        segs: prizes.map(function (b, i) { return { label: short(b.v), color: WHEEL_COLORS[i % WHEEL_COLORS.length] }; }),
         idx: idx,
         u: 0.2 + Math.random() * 0.6,
         result: 'You won ' + fmt(prize) + ' coins!'
       });
-      await bigWin(prize, prize, { title: 'Free coins', cls: 'jp-minor', duration: 2600, noX: true });
+      await rewardScene({ kicker: 'Bonus wheel', amount: prize, sub: 'The wheel is back in ' + clock(P.interval(p, 'wheel')) });
       showBalance(state.balance, 800);
     } finally {
       rt.busy = false;
       renderLobby();
     }
+  }
+
+  async function freeCoins() {
+    if (rt.busy) return;
+    Sound.unlock();
+    const p = prog();
+    const amount = P.claimFreeCoins(p);
+    if (!amount) {
+      Sound.error();
+      toast('Free coins are back in ' + clock(P.timeLeft(p, 'coins')));
+      return;
+    }
+    rt.busy = true;
+    try {
+      credit(amount);
+      save();
+      renderRewardButtons();
+      await rewardScene({ kicker: 'Free coins', amount: amount, sub: 'More in ' + clock(P.interval(p, 'coins')) + '. Higher levels pay more.' });
+      showBalance(state.balance, 800);
+    } finally {
+      rt.busy = false;
+      renderLobby();
+    }
+  }
+
+  function openDaily() {
+    renderDaily();
+    openModal('modal-daily');
+  }
+
+  const COIN_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="7" rx="7" ry="3" fill="#ffd84d" stroke="#c98a00"/><path d="M5 7v4c0 1.7 3.1 3 7 3s7-1.3 7-3V7" fill="#f5b400" stroke="#c98a00"/><path d="M5 11v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4" fill="#e09a00" stroke="#c98a00"/></svg>';
+  const CHEST_ICON = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="36" height="22" rx="4" fill="#b8651e" stroke="#5c2a06" stroke-width="2"/><path d="M6 22C6 12 14 8 24 8S42 12 42 22Z" fill="#d97a26" stroke="#5c2a06" stroke-width="2"/><rect x="6" y="20" width="36" height="5" fill="#ffd84d" stroke="#c98a00"/><rect x="20" y="22" width="8" height="10" rx="2" fill="#ffd84d" stroke="#c98a00"/></svg>';
+
+  function renderDaily() {
+    const p = prog();
+    const d = P.dailyStatus(p);
+    let html = '';
+    for (let i = 1; i <= 7; i++) {
+      let cls = 'day';
+      if (i === 7) cls += ' big';
+      if (d.claimable ? i < d.day : i <= d.day) cls += ' done';
+      else if (d.claimable && i === d.day) cls += ' today';
+      html += '<div class="' + cls + '"><span class="day-n">Day ' + i + '</span>' + (i === 7 ? CHEST_ICON : COIN_ICON) + '<span class="day-v">' + short(d.amounts[i - 1]) + '</span></div>';
+    }
+    $('#days').innerHTML = html;
+    const btn = $('#daily-collect');
+    btn.disabled = !d.claimable;
+    btn.textContent = d.claimable ? 'Collect ' + fmt(d.amounts[d.day - 1]) : 'Collected today';
+    $('#daily-next').textContent = d.claimable ? 'Day ' + d.day + ' of 7' : 'Next bonus in ' + clock(P.msToNextDay(p)) + '. Tomorrow is day ' + (d.day % 7 + 1) + '.';
+  }
+
+  async function claimDaily() {
+    const p = prog();
+    const got = P.claimDaily(p);
+    if (!got) return;
+    credit(got.amount);
+    save();
+    closeModal($('#modal-daily'));
+    await rewardScene({ kicker: 'Daily bonus', big: 'Day ' + got.day, amount: got.amount, sub: got.day < 7 ? 'Come back tomorrow for day ' + (got.day + 1) + '.' : 'Streak complete! Tomorrow starts again at day 1.' });
+    showBalance(state.balance, 800);
+    renderRewardButtons();
+  }
+
+  function openMissions() {
+    renderMissions();
+    openModal('modal-missions');
+  }
+
+  function renderMissions() {
+    const p = prog();
+    P.ensureMissions(p);
+    renderLevel();
+    $('#missions').innerHTML = p.missions.list.map(function (ms, i) {
+      const pct = Math.floor(ms.progress / ms.target * 100);
+      const prog2 = ms.target >= 1e5 ? short(ms.progress) + ' / ' + short(ms.target) : ms.progress + ' / ' + ms.target;
+      const btn = ms.claimed ? '<button type="button" class="btn-claim" disabled>Done</button>'
+        : ms.done ? '<button type="button" class="btn-claim ready" data-claim="' + i + '">Claim</button>'
+          : '<button type="button" class="btn-claim" disabled>' + pct + '%</button>';
+      return '<div class="mission' + (ms.done ? ' done' : '') + (ms.claimed ? ' claimed' : '') + '">' +
+        '<div class="ms-main"><span class="ms-diff ' + ms.diff + '">' + ms.diff + '</span><span class="ms-text">' + P.describe(ms) + '</span>' +
+        '<span class="ms-bar"><i style="--p:' + pct + '"></i></span><span class="ms-prog">' + prog2 + '</span></div>' +
+        '<div class="ms-side"><span class="ms-reward">' + short(ms.coins) + '<small>+' + ms.xp + ' XP</small></span>' + btn + '</div></div>';
+    }).join('');
+    const ch = P.chestStatus(p);
+    $('#chest').innerHTML = CHEST_ICON + '<div class="chest-text"><b>Mission chest</b>' +
+      (ch.opened ? 'Opened today. New missions tomorrow.' : 'Claim all 3 missions to open it: ' + short(ch.coins) + ' + ' + ch.xp + ' XP (' + ch.claimed + ' of 3)') + '</div>' +
+      '<button type="button" class="btn-claim' + (ch.ready ? ' ready' : '') + '" id="chest-open"' + (ch.ready ? '' : ' disabled') + '>' + (ch.opened ? 'Opened' : 'Open') + '</button>';
+    $('#missions-next').textContent = 'New missions in ' + clock(P.msToNextDay(p));
+  }
+
+  async function claimMission(i) {
+    const got = P.claimMission(prog(), i);
+    if (!got) return;
+    credit(got.coins);
+    gainXp(got.xp);
+    save();
+    Sound.coins();
+    FX.coinsAt(innerWidth / 2, innerHeight / 2, 12);
+    toast('+' + fmt(got.coins) + ' coins and ' + got.xp + ' XP');
+    showBalance(state.balance - pendingCoins(), 700);
+    renderMissions();
+    renderRewardButtons();
+    if (rt.levelUps.length) { closeModal($('#modal-missions')); await showLevelUps(); syncShown(); }
+  }
+
+  async function openChest() {
+    const got = P.claimChest(prog());
+    if (!got) return;
+    credit(got.coins);
+    gainXp(got.xp);
+    save();
+    closeModal($('#modal-missions'));
+    await rewardScene({ kicker: 'Mission chest', amount: got.coins, sub: '+' + got.xp + ' XP. New missions tomorrow.' });
+    showBalance(state.balance - pendingCoins(), 800);
+    await showLevelUps();
+    syncShown();
+    renderRewardButtons();
+  }
+
+  function openBroke() {
+    renderBroke();
+    openModal('modal-broke');
+  }
+
+  function renderBroke() {
+    const p = prog();
+    const ready = P.isReady(p, 'rescue');
+    const btn = $('#broke-collect');
+    btn.disabled = !ready;
+    btn.textContent = ready ? 'Collect ' + fmt(P.RESCUE) : 'Rescue coins in ' + clock(P.timeLeft(p, 'rescue'));
+    const parts = [];
+    parts.push(P.isReady(p, 'coins') ? 'Free coins are ready in the lobby' : 'Free coins in ' + clock(P.timeLeft(p, 'coins')));
+    parts.push(P.isReady(p, 'wheel') ? 'the bonus wheel is ready' : 'bonus wheel in ' + clock(P.timeLeft(p, 'wheel')));
+    if (P.dailyStatus(p).claimable) parts.push('your daily bonus is waiting');
+    $('#broke-note').textContent = parts.join(', ') + '.';
   }
 
   /* ------------------------------------------------------ control room */
@@ -1597,12 +1998,18 @@
     el.hidden = false;
     rt.modal = el;
     stopAuto();
-    const f = el.querySelector('[data-close]') || el.querySelector('button');
-    if (f) { try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); } }
+    // Focus the sheet itself so keyboard users start inside the dialog
+    // without a focus ring popping onto the close button.
+    const f = el.querySelector('.sheet');
+    if (f) {
+      f.setAttribute('tabindex', '-1');
+      try { f.focus({ preventScroll: true }); } catch (e) { f.focus(); }
+    }
   }
   function closeModal(el) {
     el.hidden = true;
     if (rt.modal === el) rt.modal = null;
+    if (rt.screen === 'lobby') renderLobby();
   }
 
   function freqName(f) {
@@ -1618,7 +2025,14 @@
   function openSettings() {
     rt.oddsId = rt.m ? rt.m.id : (state.last || 'neon');
     syncSettings();
+    showTab(rt.tab);
     openModal('modal-settings');
+  }
+
+  function showTab(tab) {
+    rt.tab = tab;
+    $$('.cr-tabs [data-tab]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); });
+    $$('.cr-panel').forEach(function (p) { p.hidden = p.dataset.panel !== tab; });
   }
 
   function syncSettings() {
@@ -1631,6 +2045,10 @@
     $('#opt-music').checked = state.settings.music;
     $('#opt-vibrate').checked = state.settings.vibrate;
     $('#opt-turbo').checked = state.settings.turbo;
+    $('#opt-fast').checked = prog().fastTimers;
+    renderLevelCtl();
+    renderBonusCtl();
+    renderForceNote();
     renderStats();
   }
 
@@ -1651,7 +2069,7 @@
     const verdict = rtp >= 1
       ? '<b class="good">' + (rtp * 100).toFixed(1) + '%</b>, so you beat the house over time'
       : '<b>' + (rtp * 100).toFixed(1) + '%</b>, a house edge of ' + ((1 - rtp) * 100).toFixed(1) + '%';
-    $('#odds-foot').innerHTML = 'Any jackpot: <b>' + oneIn(ch.total) + '</b> spins. Long-run return on ' + m.short + ' at ' + short(bet) + ' per spin: ' + verdict + '.';
+    $('#odds-foot').innerHTML = 'Any jackpot: <b>' + oneIn(ch.total) + '</b> spins, played as the ' + GAME_NAMES[m.jackpot.game] + ' game. Long-run return on ' + m.short + ' at ' + short(bet) + ' per spin: ' + verdict + '.';
   }
 
   function balToSlider(b) { return b <= 0 ? 0 : clamp(Math.log10(b), 0, 12); }
@@ -1671,8 +2089,56 @@
     save();
   }
 
+  function renderLevelCtl() {
+    const p = prog();
+    const need = P.xpNeeded(p.level);
+    $('#lvl-out').textContent = String(p.level);
+    if (document.activeElement !== $('#lvl-input')) $('#lvl-input').value = String(p.level);
+    $('#xp-slider').value = String(Math.floor(p.xp / need * 100));
+    $('#xp-out').textContent = fmt(p.xp) + ' / ' + fmt(need);
+    renderLevel();
+  }
+
+  function clockNote(off) {
+    if (!off) return 'Game clock: real time';
+    const h = Math.round(off / 3600000);
+    const d = Math.floor(h / 24);
+    const rest = h % 24;
+    return 'Game clock: ' + (d ? d + ' day' + (d > 1 ? 's' : '') : '') + (d && rest ? ' and ' : '') + (rest ? rest + ' hour' + (rest > 1 ? 's' : '') : '') + ' ahead of real time';
+  }
+
+  function renderBonusCtl() {
+    const p = prog();
+    const d = P.dailyStatus(p);
+    $('#cr-daily-out').textContent = d.claimable ? 'Day ' + d.day + ' ready' : 'Day ' + d.day + ' collected';
+    $('#cr-streak').innerHTML = [1, 2, 3, 4, 5, 6, 7].map(function (i) {
+      return '<button type="button" data-streak="' + i + '" class="' + (d.claimable && d.day === i ? 'on' : '') + '">Day ' + i + '</button>';
+    }).join('');
+    renderTimers();
+    $('#clock-note').textContent = clockNote(p.clockOffset);
+    P.ensureMissions(p);
+    $('#cr-missions').innerHTML = p.missions.list.map(function (ms, i) {
+      return '<div class="cr-mission"><span>' + P.describe(ms) + ' (' + (ms.claimed ? 'claimed' : ms.done ? 'ready to claim' : short(ms.progress) + '/' + short(ms.target)) + ')</span>' +
+        '<button type="button" class="btn-claim" data-complete="' + i + '"' + (ms.done ? ' disabled' : '') + '>Complete</button></div>';
+    }).join('');
+  }
+
+  function renderTimers() {
+    const p = prog();
+    [['coins', '#cr-coins-left'], ['wheel', '#cr-wheel-left'], ['rescue', '#cr-rescue-left']].forEach(function (t) {
+      $(t[1]).textContent = P.isReady(p, t[0]) ? 'Ready' : clock(P.timeLeft(p, t[0]));
+    });
+  }
+
+  function renderForceNote() {
+    const names = { fs: 'free spins', mini: 'Mini jackpot', minor: 'Minor jackpot', major: 'Major jackpot', grand: 'Grand jackpot', big: 'Big win', mega: 'Mega win', epic: 'Epic win', legendary: 'Legendary win', feature: 'machine feature', tease: 'near miss' };
+    $('#force-note').textContent = 'Next spin: ' + (rt.force ? names[rt.force] : 'normal');
+    $$('#force-grid [data-force]').forEach(function (b) { b.classList.toggle('on', (b.dataset.force || null) === rt.force); });
+  }
+
   function renderStats() {
     const s = state.stats;
+    const p = prog();
     const ret = s.wagered ? (s.won / s.wagered * 100).toFixed(1) + '%' : '—';
     const items = [
       ['Spins', fmt(s.spins)],
@@ -1681,6 +2147,8 @@
       ['Won', short(s.won)],
       ['Biggest win', s.biggest ? short(s.biggest) + ' (' + s.biggestX.toFixed(0) + '×, ' + s.biggestOn + ')' : '—'],
       ['Free spin rounds', fmt(s.freeSpins)],
+      ['Level', p.level + ' (' + short(p.totalXp) + ' XP total)'],
+      ['Login streak', p.daily.streak ? 'Day ' + p.daily.streak : '—'],
       ['Jackpots', s.jackpots.mini + ' mini · ' + s.jackpots.minor + ' minor · ' + s.jackpots.major + ' major · ' + s.jackpots.grand + ' grand']
     ];
     $('#stats').innerHTML = items.map(function (it, i) {
@@ -1728,8 +2196,13 @@
       ? '<li>' + symHTML(m, 'scatter') + '<span><strong>Free spins:</strong> ' + fsAward + ' free spins. Every win during free spins pays <strong>×3</strong>, and stars can retrigger more.</span></li>'
       : m.id === 'dragon'
         ? '<li>' + symHTML(m, 'scatter') + '<span><strong>Free spins:</strong> ' + fsAward + ' free spins. Every wild that lands <strong>sticks</strong> until the round ends.</span></li>' +
-          '<li>' + symHTML(m, 'wild') + '<span><strong>Dragon Fire:</strong> about 1 spin in ' + Math.round(1 / m.fire.chance) + ', the dragon torches 2 to 6 symbols into wilds.</span></li>'
+          '<li>' + symHTML(m, 'wild') + '<span><strong>Dragon Fire:</strong> about 1 spin in ' + Math.round(1 / m.fire.chance) + ', Ember torches 2 to 6 symbols into wilds.</span></li>'
         : '<li>' + symHTML(m, 'scatter') + '<span><strong>Free spins:</strong> ' + fsAward + ' free spins. The cascade multiplier <strong>never resets</strong> during the round; it grows by 1 with every cascade.</span></li>';
+    const game = m.jackpot.game === 'pick'
+      ? 'tap tiles to reveal jackpots; the first one you find 3 times is yours'
+      : m.jackpot.game === 'holdspin'
+        ? 'the coins lock in place and you get 3 respins; every new coin resets them and carries a cash prize or a Mini, Minor or Major jackpot, and filling all ' + (m.reels * m.rows) + ' spots wins the Grand'
+        : 'Zib’s rocket blasts off and climbs past the Mini, Minor, Major and Grand rings; the highest ring it reaches is your jackpot';
     $('#info-title').textContent = m.name;
     $('#info-body').innerHTML =
       '<p class="info-note">' + how + ' Amounts below are for your current bet of ' + short(bet) + '.</p>' +
@@ -1738,7 +2211,7 @@
       '<li>' + symHTML(m, 'wild') + '<span><strong>Wild</strong> stands in for every symbol except bonus symbols and jackpot coins.</span></li>' +
       '<li>' + symHTML(m, 'scatter') + '<span><strong>' + m.symbols.scatter.name + '</strong> pays anywhere: ' + scPays + '.</span></li>' +
       feature +
-      '<li>' + symHTML(m, 'coin') + '<span><strong>Jackpot coins:</strong> 3 or more spin the Jackpot Wheel for Mini, Minor, Major or Grand. Jackpots grow with every spin and scale with your bet.</span></li>' +
+      '<li>' + symHTML(m, 'coin') + '<span><strong>' + GAME_NAMES[m.jackpot.game] + ':</strong> 3 or more jackpot coins start it: ' + game + '. Jackpots grow with every spin and scale with your bet.</span></li>' +
       '</ul>' +
       '<p class="info-note">Long-run return is about ' + (E.estimateRtp(m, 1).total * 100).toFixed(1) + '% at normal jackpot frequency (measured over millions of simulated spins). One spin can win up to ' + fmt(m.maxWin) + '× the bet.</p>';
   }
@@ -1754,7 +2227,18 @@
     $('#btn-settings').addEventListener('click', function () { Sound.click(); openSettings(); });
     $('#btn-settings-lobby').addEventListener('click', function () { Sound.click(); openSettings(); });
     $('#btn-info').addEventListener('click', function () { Sound.click(); renderInfo(); openModal('modal-info'); });
-    $('#btn-bonus').addEventListener('click', bonusWheel);
+    $('#btn-level').addEventListener('click', function () { if (rt.busy) return; Sound.click(); openMissions(); });
+    $('#lobby-level').addEventListener('click', function () { Sound.click(); openMissions(); });
+    $('#rw-daily').addEventListener('click', function () { Sound.click(); openDaily(); });
+    $('#rw-missions').addEventListener('click', function () { Sound.click(); openMissions(); });
+    $('#rw-coins').addEventListener('click', freeCoins);
+    $('#rw-wheel').addEventListener('click', bonusWheel);
+    $('#daily-collect').addEventListener('click', claimDaily);
+    $('#missions').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-claim]');
+      if (b) claimMission(+b.dataset.claim);
+    });
+    $('#chest').addEventListener('click', function (e) { if (e.target.closest('#chest-open')) openChest(); });
     $('#btn-turbo').addEventListener('click', function () {
       state.settings.turbo = !state.settings.turbo;
       applySettings();
@@ -1790,13 +2274,24 @@
     });
     $('#ov-bigwin').addEventListener('click', skipAll);
     $('#ov-feature').addEventListener('click', skipAll);
+    $('#ov-reward').addEventListener('click', skipAll);
 
     $$('.modal').forEach(function (mod) {
       mod.addEventListener('click', function (e) { if (e.target === mod) closeModal(mod); });
       $$('[data-close]', mod).forEach(function (b) { b.addEventListener('click', function () { closeModal(mod); }); });
     });
 
-    // Control Room: jackpot frequency
+    // Control Room tabs
+    $('.cr-tabs').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-tab]');
+      if (!b) return;
+      Sound.click();
+      showTab(b.dataset.tab);
+      if (b.dataset.tab === 'bonus') renderBonusCtl();
+      if (b.dataset.tab === 'coins') renderLevelCtl();
+    });
+
+    // jackpot frequency
     $('#jp-freq').addEventListener('input', function (e) {
       let v = parseFloat(e.target.value);
       if (Math.abs(v) < 0.05) v = 0;
@@ -1817,7 +2312,7 @@
       renderFreq();
     });
 
-    // Control Room: coins
+    // coins
     $('#bal-slider').addEventListener('input', function (e) { setCoins(sliderToBal(parseFloat(e.target.value)), 'slider'); });
     $('#bal-set').addEventListener('click', function () {
       const v = parseFloat($('#bal-input').value);
@@ -1826,7 +2321,7 @@
       toast('Coins set to ' + fmt(state.balance));
     });
     $('#bal-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('#bal-set').click(); });
-    $$('#modal-settings .chips button').forEach(function (b) {
+    $$('#modal-settings .chips [data-add], #modal-settings .chips [data-set]').forEach(function (b) {
       b.addEventListener('click', function () {
         Sound.click();
         if (b.dataset.add) setCoins(state.balance + Number(b.dataset.add), 'chip');
@@ -1834,7 +2329,118 @@
       });
     });
 
-    // Control Room: options
+    // level and XP
+    $('#lvl-set').addEventListener('click', function () {
+      const v = parseInt($('#lvl-input').value, 10);
+      if (!isFinite(v) || v < 1) { toast('Type a level from 1 to ' + P.MAX_LEVEL, true); return; }
+      P.setLevel(prog(), v, 0);
+      save();
+      renderLevelCtl();
+      toast('Level set to ' + prog().level);
+    });
+    $('#lvl-input').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('#lvl-set').click(); });
+    $('#xp-slider').addEventListener('input', function (e) {
+      const p = prog();
+      p.xp = Math.floor(P.xpNeeded(p.level) * clamp(parseFloat(e.target.value), 0, 99) / 100);
+      renderLevelCtl();
+    });
+    $('#xp-slider').addEventListener('change', save);
+    $('#lvl-up').addEventListener('click', async function () {
+      if (rt.busy) { toast('Wait for the spin to finish', true); return; }
+      const p = prog();
+      gainXp(P.xpNeeded(p.level) - p.xp);
+      save();
+      closeModal($('#modal-settings'));
+      rt.busy = true;
+      try { await showLevelUps(); } finally { rt.busy = false; }
+      syncShown();
+      if (rt.screen === 'lobby') renderLobby();
+    });
+    $('#xp-add').addEventListener('click', async function () {
+      if (rt.busy) { toast('Wait for the spin to finish', true); return; }
+      gainXp(1000);
+      save();
+      renderLevelCtl();
+      if (rt.levelUps.length) {
+        closeModal($('#modal-settings'));
+        rt.busy = true;
+        try { await showLevelUps(); } finally { rt.busy = false; }
+        syncShown();
+      } else toast('+1,000 XP');
+    });
+    $('#lvl-reset').addEventListener('click', function () {
+      P.setLevel(prog(), 1, 0);
+      save();
+      renderLevelCtl();
+      toast('Back to level 1');
+    });
+
+    // bonuses
+    $('#cr-streak').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-streak]');
+      if (!b) return;
+      P.setStreakDay(prog(), +b.dataset.streak);
+      save();
+      renderBonusCtl();
+      toast('Day ' + b.dataset.streak + ' of the streak is ready to collect');
+    });
+    $('#cr-daily-next').addEventListener('click', function () {
+      P.nextDay(prog());
+      save();
+      renderBonusCtl();
+      toast('It is tomorrow, as far as the daily bonus knows');
+    });
+    $('#cr-daily-break').addEventListener('click', function () {
+      P.breakStreak(prog());
+      save();
+      renderBonusCtl();
+      toast('Streak broken: the next bonus is day 1');
+    });
+    $('#cr-daily-open').addEventListener('click', function () { closeModal($('#modal-settings')); openDaily(); });
+    $$('#modal-settings [data-ready]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        P.makeReady(prog(), b.dataset.ready);
+        save();
+        renderTimers();
+        toast({ coins: 'Free coins', wheel: 'Bonus wheel', rescue: 'Rescue coins' }[b.dataset.ready] + ' ready');
+      });
+    });
+    $('#opt-fast').addEventListener('change', function (e) {
+      P.setFastTimers(prog(), e.target.checked);
+      save();
+      renderTimers();
+    });
+    $('#clock-hour').addEventListener('click', function () { prog().clockOffset += 3600 * 1000; save(); renderBonusCtl(); });
+    $('#clock-day').addEventListener('click', function () { prog().clockOffset += 24 * 3600 * 1000; save(); renderBonusCtl(); });
+    $('#clock-reset').addEventListener('click', function () { prog().clockOffset = 0; save(); renderBonusCtl(); });
+    $('#cr-missions').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-complete]');
+      if (!b) return;
+      if (P.completeMission(prog(), +b.dataset.complete)) {
+        save();
+        renderBonusCtl();
+        renderLevel();
+        toast('Mission completed. Claim it in Missions');
+      }
+    });
+    $('#cr-ms-new').addEventListener('click', function () { P.rerollMissions(prog()); save(); renderBonusCtl(); renderLevel(); toast('New missions are in'); });
+    $('#cr-ms-open').addEventListener('click', function () { closeModal($('#modal-settings')); openMissions(); });
+
+    // test lab
+    $('#force-grid').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-force]');
+      if (!b) return;
+      rt.force = b.dataset.force || null;
+      renderForceNote();
+      Sound.click();
+      if (rt.force) toast(rt.screen === 'machine' ? 'Close this and press Spin' : 'Open a machine and press Spin');
+    });
+    $('#show-levelup').addEventListener('click', function () { $('#lvl-up').click(); });
+    $('#show-daily').addEventListener('click', function () { closeModal($('#modal-settings')); openDaily(); });
+    $('#show-missions').addEventListener('click', function () { closeModal($('#modal-settings')); openMissions(); });
+    $('#show-broke').addEventListener('click', function () { closeModal($('#modal-settings')); openBroke(); });
+
+    // options
     [['opt-sound', 'sound'], ['opt-music', 'music'], ['opt-vibrate', 'vibrate'], ['opt-turbo', 'turbo']].forEach(function (p) {
       $('#' + p[0]).addEventListener('change', function (e) {
         state.settings[p[1]] = e.target.checked;
@@ -1865,6 +2471,8 @@
       resetBtn.textContent = 'Reset everything';
       if (rt.busy) { toast('Wait for the spin to finish', true); return; }
       state = defaults();
+      rt.levelUps = [];
+      rt.dailyPrompted = '';
       save();
       applySettings();
       closeModal($('#modal-settings'));
@@ -1872,17 +2480,21 @@
       toast('Everything is back to the start');
     });
 
-    // Out of coins
+    // out of coins
     $('#broke-collect').addEventListener('click', function () {
-      state.balance = Math.min(MAX_COINS, state.balance + REFILL);
+      const amount = P.rescue(prog());
+      if (!amount) { renderBroke(); return; }
+      credit(amount);
       showBalance(state.balance, 800);
       save();
       closeModal($('#modal-broke'));
       Sound.coins();
       FX.coinShower(1.5, 30);
+      toast('+' + fmt(amount) + ' rescue coins');
     });
     $('#broke-settings').addEventListener('click', function () {
       closeModal($('#modal-broke'));
+      rt.tab = 'coins';
       openSettings();
     });
 
@@ -1916,26 +2528,39 @@
     if (window.ResizeObserver) new ResizeObserver(onResize).observe($('#stage'));
   }
 
+  // Once a second: timers on buttons and open popups.
+  function tick() {
+    if (rt.screen === 'lobby' && !$('#lobby').hidden) renderRewardButtons();
+    const open = rt.modal && rt.modal.id;
+    if (open === 'modal-daily') renderDaily();
+    if (open === 'modal-missions') $('#missions-next').textContent = 'New missions in ' + clock(P.msToNextDay(prog()));
+    if (open === 'modal-broke') renderBroke();
+    if (open === 'modal-settings' && rt.tab === 'bonus') renderTimers();
+  }
+
   /* -------------------------------------------------------------- boot */
 
   function start(data) {
     state = data && data.state ? normalize(data.state) : load();
     rt.shown = state.balance;
     document.documentElement.style.setProperty('--frame-pad', FRAME_PAD + 'px');
+    Mascots.ensureDefs();
     FX.init($('#fx'));
     buildLobby();
     bind();
     applySettings();
+    P.ensureMissions(prog());
     renderLobby();
     Sound.music('lobby');
     if (data && data.screen && MACH[data.screen]) enterMachine(data.screen);
-    setInterval(function () { if (rt.screen === 'lobby') updateBonus(); }, 1000);
+    else maybePromptDaily();
+    setInterval(tick, 1000);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { refit(); rt.laidOut = ''; layout(); });
   }
 
   // Small hook for testing and tinkering from the browser console.
   window.ReelRiot = {
-    force: function (kind) { rt.force = kind; return 'next spin: ' + kind; },
+    force: function (kind) { rt.force = kind; renderForceNote(); return 'next spin: ' + kind; },
     spin: function () { return doSpin(); },
     enter: function (id) { enterMachine(id); },
     lobby: function () { leaveMachine(); },

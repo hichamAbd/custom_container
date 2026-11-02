@@ -5,7 +5,7 @@
 <title>Reel Riot Casino</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#090414">
-<meta name="description" content="Three flashy slot machines with progressive jackpots. Free play, no real money.">
+<meta name="description" content="Three flashy slot machines with mascots, jackpot bonus games, levels, daily bonuses and missions. Free play, no real money.">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,6 +19,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Bungee&family=Cinzel+Decorative:wght@700;900&family=Monoton&display=swap">
 <!-- HEAD:END -->
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/mascots.css">
+<link rel="stylesheet" href="css/features.css">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
@@ -37,13 +39,35 @@
       </button>
     </header>
 
-    <section class="wallet" aria-label="Your coins">
+    <section class="wallet" aria-label="Your player card">
+      <div class="player-row">
+        <button type="button" class="lvl-badge big" id="lobby-level" aria-label="Level and missions"><span class="lvl-num" id="lobby-lvl-num">1</span></button>
+        <div class="xp-box">
+          <div class="xp-top"><span>Level <b id="lobby-lvl">1</b></span><span id="lobby-xp">0 / 600 XP</span></div>
+          <div class="xp-bar"><i id="lobby-xpbar"></i></div>
+          <div class="xp-perk" id="lobby-perk">Level up for bigger free coin rewards</div>
+        </div>
+      </div>
       <span class="wallet-label">Your coins</span>
       <span class="wallet-value fit" id="lobby-balance">10,000,000</span>
-      <button type="button" class="bonus-btn" id="btn-bonus">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.2C7 7 9 7 12 7zm0 0c1.5-3 5-3.5 5-1.2C17 7 15 7 12 7z"/></svg>
-        <span id="bonus-text">Spin the free coin wheel</span>
-      </button>
+      <div class="rewards-row">
+        <button type="button" class="rw-btn" id="rw-daily">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M9 15l2 2 4-4"/></svg>
+          <span class="rw-name">Daily bonus</span><span class="rw-sub" id="rw-daily-sub">Day 1</span>
+        </button>
+        <button type="button" class="rw-btn" id="rw-missions">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6-6M15.5 4.5H19v3.5"/></svg>
+          <span class="rw-name">Missions</span><span class="rw-sub" id="rw-missions-sub">0 of 3</span>
+        </button>
+        <button type="button" class="rw-btn" id="rw-coins">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>
+          <span class="rw-name">Free coins</span><span class="rw-sub" id="rw-coins-sub">Ready</span>
+        </button>
+        <button type="button" class="rw-btn" id="rw-wheel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6L6 18"/></svg>
+          <span class="rw-name">Bonus wheel</span><span class="rw-sub" id="rw-wheel-sub">Ready</span>
+        </button>
+      </div>
     </section>
 
     <h2 class="section-title">Pick a machine</h2>
@@ -52,10 +76,12 @@
   </main>
 
   <main id="machine" class="screen machine" hidden aria-label="Slot machine">
+    <div class="fs-fx" aria-hidden="true"></div>
     <header class="topbar">
       <button type="button" id="btn-back" class="icon-btn" aria-label="Back to the lobby">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
+      <button type="button" id="btn-level" class="lvl-badge" aria-label="Level and missions"><span class="lvl-num" id="lvl-num">1</span></button>
       <div class="balance-pill">
         <span class="pill-label">Coins</span>
         <span class="pill-value fit" id="balance">0</span>
@@ -80,6 +106,7 @@
     <section class="stage-col">
       <div class="stage-head">
         <div class="title-row">
+          <div class="perch" id="perch"></div>
           <h1 class="m-name" id="m-name">Neon Fruit Frenzy</h1>
           <button type="button" id="btn-info" class="info-btn" aria-label="Paytable and rules">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.2v.1"/></svg>
@@ -87,7 +114,7 @@
         </div>
         <div class="ladder" id="ladder" hidden></div>
         <div class="fs-banner" id="fs-banner" hidden>
-          <span class="fs-label">Free spins</span>
+          <span class="fs-marquee">Free spins</span>
           <span class="fs-count"><b id="fs-left">0</b> left</span>
           <span class="fs-extra" id="fs-extra"></span>
         </div>
@@ -146,6 +173,7 @@
   <div class="overlay ov-bigwin" id="ov-bigwin" hidden>
     <div class="rays" aria-hidden="true"></div>
     <div class="bw-card">
+      <div class="bw-mascot" id="bw-mascot"></div>
       <div class="bw-title" id="bw-title">Big win</div>
       <div class="bw-amount fit" id="bw-amount">0</div>
       <div class="bw-x" id="bw-x"></div>
@@ -155,7 +183,9 @@
 
   <div class="overlay ov-feature" id="ov-feature" hidden>
     <div class="rays rays-soft" aria-hidden="true"></div>
+    <div class="ft-burst" id="ft-burst" aria-hidden="true"></div>
     <div class="feature-card">
+      <div class="ft-mascot" id="ft-mascot"></div>
       <div class="ft-kicker" id="ft-kicker">You won</div>
       <div class="ft-big fit" id="ft-big">10</div>
       <div class="ft-title" id="ft-title">Free spins</div>
@@ -166,13 +196,28 @@
 
   <div class="overlay ov-wheel" id="ov-wheel" hidden>
     <div class="wheel-card">
-      <div class="wheel-title" id="wheel-title">Jackpot wheel</div>
+      <div class="wheel-title" id="wheel-title">Bonus wheel</div>
       <div class="wheel-wrap">
         <canvas id="wheel" class="wheel-canvas" width="640" height="640"></canvas>
         <div class="wheel-pointer" id="wheel-pointer" aria-hidden="true"></div>
         <button type="button" class="wheel-hub" id="wheel-hub">Spin</button>
       </div>
-      <div class="wheel-sub" id="wheel-sub">Tap SPIN to find your jackpot</div>
+      <div class="wheel-sub" id="wheel-sub">Tap anywhere to spin</div>
+    </div>
+  </div>
+
+  <div class="overlay ov-bonus" id="ov-bonus" hidden></div>
+
+  <div class="overlay ov-reward" id="ov-reward" hidden>
+    <div class="rays" aria-hidden="true"></div>
+    <div class="rw-card">
+      <div class="rw-art" id="rw-art"></div>
+      <div class="rw-kicker" id="rw-kicker">Level up!</div>
+      <div class="rw-big fit" id="rw-big"></div>
+      <div class="rw-title" id="rw-title"></div>
+      <div class="rw-amount fit" id="rw-amount"></div>
+      <div class="rw-sub" id="rw-sub"></div>
+      <button type="button" class="btn-gold" id="rw-btn">Collect</button>
     </div>
   </div>
 
@@ -184,60 +229,194 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </header>
+      <div class="cr-tabs" role="tablist" aria-label="Control Room sections">
+        <button type="button" role="tab" data-tab="odds" aria-selected="true">Jackpots</button>
+        <button type="button" role="tab" data-tab="coins" aria-selected="false">Coins &amp; XP</button>
+        <button type="button" role="tab" data-tab="bonus" aria-selected="false">Bonuses</button>
+        <button type="button" role="tab" data-tab="test" aria-selected="false">Test lab</button>
+        <button type="button" role="tab" data-tab="opts" aria-selected="false">Options</button>
+      </div>
 
-      <section class="ctl" aria-labelledby="jp-freq-label">
-        <div class="ctl-head">
-          <label id="jp-freq-label" for="jp-freq">Jackpot frequency</label>
-          <output id="jp-freq-out" for="jp-freq">&times;1 &middot; Normal</output>
-        </div>
-        <input type="range" id="jp-freq" min="-1.7" max="1.7" step="0.01" value="0">
-        <div class="range-ends"><span>Rarer</span><button type="button" class="link-btn" id="jp-reset">Back to normal</button><span>More often</span></div>
-        <div class="odds-tabs" id="odds-tabs" role="tablist" aria-label="Machine"></div>
-        <table class="odds" id="odds-table">
-          <thead><tr><th scope="col">Jackpot</th><th scope="col">Chance per spin</th><th scope="col">Worth now</th></tr></thead>
-          <tbody id="odds-body"></tbody>
-        </table>
-        <p class="odds-foot" id="odds-foot"></p>
-      </section>
+      <div class="cr-panel" data-panel="odds" role="tabpanel">
+        <section class="ctl" aria-labelledby="jp-freq-label">
+          <div class="ctl-head">
+            <label id="jp-freq-label" for="jp-freq">Jackpot frequency</label>
+            <output id="jp-freq-out" for="jp-freq">&times;1 &middot; Normal</output>
+          </div>
+          <input type="range" id="jp-freq" min="-1.7" max="1.7" step="0.01" value="0">
+          <div class="range-ends"><span>Rarer</span><button type="button" class="link-btn" id="jp-reset">Back to normal</button><span>More often</span></div>
+          <div class="odds-tabs" id="odds-tabs" role="tablist" aria-label="Machine"></div>
+          <table class="odds" id="odds-table">
+            <thead><tr><th scope="col">Jackpot</th><th scope="col">Chance per spin</th><th scope="col">Worth now</th></tr></thead>
+            <tbody id="odds-body"></tbody>
+          </table>
+          <p class="odds-foot" id="odds-foot"></p>
+        </section>
+      </div>
 
-      <section class="ctl" aria-labelledby="bal-label">
-        <div class="ctl-head">
-          <label id="bal-label" for="bal-input">Coins</label>
-          <output id="bal-out" for="bal-input bal-slider">0</output>
-        </div>
-        <div class="bal-row">
-          <input type="number" id="bal-input" inputmode="numeric" min="0" step="1" aria-describedby="bal-hint">
-          <button type="button" class="btn-small" id="bal-set">Set coins</button>
-        </div>
-        <input type="range" id="bal-slider" min="0" max="12" step="0.01" value="7" aria-label="Coins, logarithmic scale">
-        <div class="range-ends" id="bal-hint"><span>0</span><span>1 million</span><span>1 trillion</span></div>
-        <div class="chips">
-          <button type="button" data-add="1000000">+1M</button>
-          <button type="button" data-add="100000000">+100M</button>
-          <button type="button" data-add="10000000000">+10B</button>
-          <button type="button" data-set="10000000">Reset to 10M</button>
-        </div>
-      </section>
+      <div class="cr-panel" data-panel="coins" role="tabpanel" hidden>
+        <section class="ctl" aria-labelledby="bal-label">
+          <div class="ctl-head">
+            <label id="bal-label" for="bal-input">Coins</label>
+            <output id="bal-out" for="bal-input bal-slider">0</output>
+          </div>
+          <div class="bal-row">
+            <input type="number" id="bal-input" inputmode="numeric" min="0" step="1" aria-describedby="bal-hint">
+            <button type="button" class="btn-small" id="bal-set">Set coins</button>
+          </div>
+          <input type="range" id="bal-slider" min="0" max="12" step="0.01" value="7" aria-label="Coins, logarithmic scale">
+          <div class="range-ends" id="bal-hint"><span>0</span><span>1 million</span><span>1 trillion</span></div>
+          <div class="chips">
+            <button type="button" data-add="1000000">+1M</button>
+            <button type="button" data-add="100000000">+100M</button>
+            <button type="button" data-add="10000000000">+10B</button>
+            <button type="button" data-set="10000000">Reset to 10M</button>
+          </div>
+        </section>
+        <section class="ctl" aria-labelledby="lvl-label">
+          <div class="ctl-head">
+            <label id="lvl-label" for="lvl-input">Level</label>
+            <output id="lvl-out">1</output>
+          </div>
+          <div class="bal-row">
+            <input type="number" id="lvl-input" inputmode="numeric" min="1" max="999" step="1">
+            <button type="button" class="btn-small" id="lvl-set">Set level</button>
+          </div>
+          <label class="sub-label" for="xp-slider">XP toward the next level: <b id="xp-out">0 / 600</b></label>
+          <input type="range" id="xp-slider" min="0" max="99" step="1" value="0">
+          <div class="chips">
+            <button type="button" id="lvl-up">Level up now</button>
+            <button type="button" id="xp-add">+1,000 XP</button>
+            <button type="button" id="lvl-reset">Back to level 1</button>
+          </div>
+          <p class="fine">"Level up now" plays the real level-up with its coin reward. Setting the level directly gives no reward.</p>
+        </section>
+      </div>
 
-      <section class="ctl toggles" aria-label="Options">
-        <label class="tog"><input type="checkbox" id="opt-sound"><span>Sound effects</span></label>
-        <label class="tog"><input type="checkbox" id="opt-music"><span>Music</span></label>
-        <label class="tog"><input type="checkbox" id="opt-vibrate"><span>Vibration</span></label>
-        <label class="tog"><input type="checkbox" id="opt-turbo"><span>Turbo spins</span></label>
-      </section>
+      <div class="cr-panel" data-panel="bonus" role="tabpanel" hidden>
+        <section class="ctl" aria-labelledby="cr-daily-label">
+          <div class="ctl-head"><h3 id="cr-daily-label">Daily bonus streak</h3><output id="cr-daily-out">Day 1</output></div>
+          <p class="sub-label">Make this day of the streak the one you collect today:</p>
+          <div class="chips" id="cr-streak"></div>
+          <div class="chips">
+            <button type="button" id="cr-daily-next">Simulate the next day</button>
+            <button type="button" id="cr-daily-break">Break the streak</button>
+            <button type="button" id="cr-daily-open">Open the daily bonus</button>
+          </div>
+        </section>
+        <section class="ctl" aria-labelledby="cr-timers-label">
+          <div class="ctl-head"><h3 id="cr-timers-label">Timed bonuses</h3></div>
+          <div class="timer-rows">
+            <div class="timer-row"><span>Free coins</span><output id="cr-coins-left">Ready</output><button type="button" class="btn-claim" data-ready="coins">Ready now</button></div>
+            <div class="timer-row"><span>Bonus wheel</span><output id="cr-wheel-left">Ready</output><button type="button" class="btn-claim" data-ready="wheel">Ready now</button></div>
+            <div class="timer-row"><span>Rescue coins</span><output id="cr-rescue-left">Ready</output><button type="button" class="btn-claim" data-ready="rescue">Ready now</button></div>
+          </div>
+          <label class="tog"><input type="checkbox" id="opt-fast"><span>Fast timers (free coins every minute, wheel every 2 minutes)</span></label>
+          <div class="chips">
+            <button type="button" id="clock-hour">Jump 1 hour ahead</button>
+            <button type="button" id="clock-day">Jump 1 day ahead</button>
+            <button type="button" id="clock-reset">Back to real time</button>
+          </div>
+          <p class="fine" id="clock-note">Game clock: real time</p>
+        </section>
+        <section class="ctl" aria-labelledby="cr-ms-label">
+          <div class="ctl-head"><h3 id="cr-ms-label">Today's missions</h3></div>
+          <div class="timer-rows" id="cr-missions"></div>
+          <div class="chips">
+            <button type="button" id="cr-ms-new">New missions</button>
+            <button type="button" id="cr-ms-open">Open missions</button>
+          </div>
+        </section>
+      </div>
 
-      <section class="ctl" aria-labelledby="stats-title">
-        <div class="ctl-head">
-          <h3 id="stats-title">Your stats</h3>
-          <button type="button" class="link-btn" id="stats-reset">Reset stats</button>
+      <div class="cr-panel" data-panel="test" role="tabpanel" hidden>
+        <section class="ctl" aria-labelledby="force-label">
+          <div class="ctl-head"><h3 id="force-label">Force the next spin</h3></div>
+          <p class="sub-label">Choose a result, close this window and press Spin on any machine.</p>
+          <div class="force-grid chips" id="force-grid">
+            <button type="button" data-force="fs">Free spins</button>
+            <button type="button" data-force="mini">Mini jackpot</button>
+            <button type="button" data-force="minor">Minor jackpot</button>
+            <button type="button" data-force="major">Major jackpot</button>
+            <button type="button" data-force="grand">Grand jackpot</button>
+            <button type="button" data-force="big">Big win</button>
+            <button type="button" data-force="mega">Mega win</button>
+            <button type="button" data-force="epic">Epic win</button>
+            <button type="button" data-force="legendary">Legendary win</button>
+            <button type="button" data-force="feature">Machine feature</button>
+            <button type="button" data-force="tease">Near miss</button>
+            <button type="button" data-force="">Normal spin</button>
+          </div>
+          <p class="force-note" id="force-note">Next spin: normal</p>
+          <p class="fine">Machine feature means Dragon Fire on Dragon's Hoard, a long cascade chain on Cosmic Cascade, and a wild-heavy win on Neon Fruit Frenzy.</p>
+        </section>
+        <section class="ctl" aria-labelledby="show-label">
+          <div class="ctl-head"><h3 id="show-label">Show a screen</h3></div>
+          <div class="chips">
+            <button type="button" id="show-levelup">Level-up celebration</button>
+            <button type="button" id="show-daily">Daily bonus</button>
+            <button type="button" id="show-missions">Missions</button>
+            <button type="button" id="show-broke">Out of coins</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="cr-panel" data-panel="opts" role="tabpanel" hidden>
+        <section class="ctl toggles" aria-label="Options">
+          <label class="tog"><input type="checkbox" id="opt-sound"><span>Sound effects</span></label>
+          <label class="tog"><input type="checkbox" id="opt-music"><span>Music</span></label>
+          <label class="tog"><input type="checkbox" id="opt-vibrate"><span>Vibration</span></label>
+          <label class="tog"><input type="checkbox" id="opt-turbo"><span>Turbo spins</span></label>
+        </section>
+        <section class="ctl" aria-labelledby="stats-title">
+          <div class="ctl-head">
+            <h3 id="stats-title">Your stats</h3>
+            <button type="button" class="link-btn" id="stats-reset">Reset stats</button>
+          </div>
+          <dl class="stats" id="stats"></dl>
+        </section>
+        <section class="ctl ctl-danger">
+          <button type="button" class="btn-danger" id="reset-all">Reset everything</button>
+          <p class="fine">Puts coins, jackpots, level, bonuses, stats and settings back to the start.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-daily" hidden role="dialog" aria-modal="true" aria-labelledby="daily-title">
+    <div class="sheet">
+      <header class="sheet-head">
+        <h2 id="daily-title">Daily bonus</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close the daily bonus">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <p class="lede">Collect once a day and come back tomorrow to keep the streak going. Day 7 pays the most.</p>
+      <div class="days" id="days"></div>
+      <button type="button" class="btn-gold" id="daily-collect">Collect</button>
+      <p class="fine center" id="daily-next"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-missions" hidden role="dialog" aria-modal="true" aria-labelledby="missions-title">
+    <div class="sheet">
+      <header class="sheet-head">
+        <h2 id="missions-title">Missions</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close missions">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="lvl-card">
+        <span class="lvl-badge big" id="ms-badge"><span class="lvl-num" id="ms-lvl-num">1</span></span>
+        <div class="xp-box">
+          <div class="xp-top"><span>Level <b id="ms-lvl">1</b></span><span id="ms-xp">0 / 600 XP</span></div>
+          <div class="xp-bar"><i id="ms-xpbar"></i></div>
+          <div class="xp-perk" id="ms-perk"></div>
         </div>
-        <dl class="stats" id="stats"></dl>
-      </section>
-
-      <section class="ctl ctl-danger">
-        <button type="button" class="btn-danger" id="reset-all">Reset everything</button>
-        <p class="fine">Puts coins, jackpots, stats and settings back to the start.</p>
-      </section>
+      </div>
+      <div class="missions" id="missions"></div>
+      <div class="chest" id="chest"></div>
+      <p class="fine center" id="missions-next"></p>
     </div>
   </div>
 
@@ -256,8 +435,9 @@
   <div class="modal" id="modal-broke" hidden role="dialog" aria-modal="true" aria-labelledby="broke-title">
     <div class="sheet sheet-small">
       <h2 id="broke-title">Out of coins</h2>
-      <p class="broke-text">The house had a good run. Grab a free top-up and keep spinning.</p>
-      <button type="button" class="btn-gold" id="broke-collect">Collect 10,000,000</button>
+      <p class="broke-text" id="broke-text">The house had a good run. Grab the rescue coins and keep spinning.</p>
+      <button type="button" class="btn-gold" id="broke-collect">Collect 1,000,000</button>
+      <p class="fine center" id="broke-note"></p>
       <button type="button" class="link-btn" id="broke-settings">Set coins in the Control Room</button>
     </div>
   </div>
@@ -269,8 +449,11 @@
 <!-- APP:END -->
 <script src="js/engine.js"></script>
 <script src="js/machines.js"></script>
+<script src="js/progress.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/fx.js"></script>
+<script src="js/mascots.js"></script>
+<script src="js/bonus.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

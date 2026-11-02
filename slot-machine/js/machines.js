@@ -79,7 +79,8 @@
         { id: 'grand', name: 'GRAND', odds: 50000, seed: 1000 }
       ],
       hitCoins: [[3, 70], [4, 22], [5, 8]],
-      teaseCoins: [[0, 86], [1, 10], [2, 4]]
+      teaseCoins: [[0, 86], [1, 10], [2, 4]],
+      game: 'pick'
     },
     maxWin: 5000,
     rtp: { base: 0.8664 }
@@ -120,7 +121,7 @@
       wild: [0, 2.7, 2.7, 2.7, 2.7]
     },
     fire: {
-      chance: 1 / 40,
+      chance: 1 / 44,
       fromReel: 1,
       counts: [[2, 20], [3, 40], [4, 25], [5, 10], [6, 5]]
     },
@@ -143,10 +144,18 @@
         { id: 'grand', name: 'GRAND', odds: 75000, seed: 2000 }
       ],
       hitCoins: [[3, 65], [4, 25], [5, 10]],
-      teaseCoins: [[0, 84], [1, 11], [2, 5]]
+      teaseCoins: [[0, 84], [1, 11], [2, 5]],
+      game: 'holdspin'
+    },
+    // Jackpot game: held coins pay cash (x bet); a full grid is the Grand.
+    holdSpin: {
+      respins: 3,
+      land: 0.035,
+      grandLand: 0.3,
+      values: [[0.25, 30], [0.5, 28], [1, 20], [1.5, 10], [2, 7], [5, 4], [10, 1]]
     },
     maxWin: 10000,
-    rtp: { base: 0.8619 }
+    rtp: { base: 0.8434, holdCash: 6.388 }
   };
 
   const cosmic = {
@@ -201,7 +210,8 @@
         { id: 'grand', name: 'GRAND', odds: 100000, seed: 3000 }
       ],
       hitCoins: [[3, 60], [4, 25], [5, 10], [6, 5]],
-      teaseCoins: [[0, 84], [1, 11], [2, 5]]
+      teaseCoins: [[0, 84], [1, 11], [2, 5]],
+      game: 'rocket'
     },
     maxWin: 15000,
     rtp: { base: 0.8616 }

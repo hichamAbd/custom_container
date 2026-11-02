@@ -1,0 +1,223 @@
+/*
+ * Reel Riot mascots: DJ Pina, Ember and Zib. Each part animates on its own;
+ * the mood lives in data-mood on the .mascot wrapper.
+ */
+.mascot {
+  position: relative;
+  display: block;
+  width: var(--m-size, 120px);
+  aspect-ratio: 200 / 250;
+  flex: none;
+}
+.mascot-dragon { aspect-ratio: 220 / 250; }
+.mascot-cosmic { aspect-ratio: 220 / 240; }
+.mascot-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.mascot-svg * { transform-box: fill-box; }
+/* keep SVG's own rotate(angle cx cy) attributes pivoting where they were drawn */
+.mascot-svg [transform] { transform-box: view-box; transform-origin: 0 0; }
+.mascot .m-shadow { fill: rgba(0, 0, 0, 0.38); }
+
+.mascot .m-all {
+  transform-origin: 50% 100%;
+  animation: mBob 2.6s ease-in-out infinite;
+}
+@keyframes mBob {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  50% { transform: translateY(-4px) scale(1.01, 0.99); }
+}
+
+/* faces */
+.mascot .mouth { display: none; }
+.mascot .mouth-smile { display: inline; }
+.mascot:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="fire"], [data-mood="beam"]) .mouth-smile { display: none; }
+.mascot:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="fire"], [data-mood="beam"]) .mouth-open { display: inline; }
+.mascot:is([data-mood="wow"], [data-mood="focus"]) .mouth-smile { display: none; }
+.mascot:is([data-mood="wow"], [data-mood="focus"]) .mouth-o { display: inline; }
+.mascot[data-mood="sad"] .mouth-smile { display: none; }
+.mascot[data-mood="sad"] .mouth-sad { display: inline; }
+
+.mascot .m-stars {
+  opacity: 0;
+  transform-origin: 50% 50%;
+  transform: scale(0.3);
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 1.8, 0.4, 1);
+}
+.mascot[data-mood="wow"] .m-stars {
+  opacity: 1;
+  transform: scale(1);
+  animation: starPulse 0.5s ease-in-out 0.25s infinite alternate;
+}
+@keyframes starPulse { to { transform: scale(1.18); } }
+.mascot[data-mood="wow"] .m-eyes { opacity: 0; }
+
+.mascot .m-lids ellipse {
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  animation: mBlink 4.6s infinite;
+}
+@keyframes mBlink {
+  0%, 93%, 100% { transform: scaleY(0); }
+  96% { transform: scaleY(1); }
+}
+.mascot[data-mood="focus"] .m-pupils { transform-origin: 50% 50%; transform: scale(1.2); }
+
+/* arms (shoulders are the transform origins) */
+.mascot .m-arm-l, .mascot .m-arm-r { transition: transform 0.25s ease-out; }
+.mascot-neon .m-arm-l { transform-origin: 88% 8%; }
+.mascot-neon .m-arm-r { transform-origin: 12% 8%; }
+.mascot-dragon .m-arm-l { transform-origin: 76% 14%; }
+.mascot-dragon .m-arm-r { transform-origin: 24% 14%; }
+.mascot-cosmic .m-arm-r { transform-origin: 12% 90%; animation: wave 2.4s ease-in-out infinite; }
+@keyframes wave {
+  0%, 55%, 100% { transform: rotate(0); }
+  65% { transform: rotate(-28deg); }
+  75% { transform: rotate(10deg); }
+  85% { transform: rotate(-24deg); }
+}
+
+/* happy: a double hop */
+.mascot[data-mood="happy"] .m-all { animation: mHop 0.45s ease-out 2; }
+@keyframes mHop {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  40% { transform: translateY(-18px) scale(0.98, 1.03); }
+  75% { transform: translateY(0) scale(1.04, 0.96); }
+}
+.mascot[data-mood="happy"] .m-arm-l { transform: rotate(45deg); }
+.mascot[data-mood="happy"] .m-arm-r { transform: rotate(-45deg); }
+
+/* cheer: arms up and bouncing */
+.mascot[data-mood="cheer"] .m-all { animation: mHop 0.5s ease-out infinite; }
+.mascot[data-mood="cheer"] .m-arm-l { animation: armUpL 0.25s ease-in-out infinite alternate; }
+.mascot[data-mood="cheer"] .m-arm-r { animation: armUpR 0.25s ease-in-out infinite alternate; }
+@keyframes armUpL { from { transform: rotate(105deg); } to { transform: rotate(135deg); } }
+@keyframes armUpR { from { transform: rotate(-105deg); } to { transform: rotate(-135deg); } }
+
+/* dance: sway and wave */
+.mascot[data-mood="dance"] .m-all { animation: mDance 0.9s ease-in-out infinite; }
+@keyframes mDance {
+  0%, 100% { transform: rotate(-7deg) translateY(0); }
+  25% { transform: rotate(0deg) translateY(-12px); }
+  50% { transform: rotate(7deg) translateY(0); }
+  75% { transform: rotate(0deg) translateY(-12px); }
+}
+.mascot[data-mood="dance"] .m-arm-l { animation: armWaveL 0.45s ease-in-out infinite alternate; }
+.mascot[data-mood="dance"] .m-arm-r { animation: armWaveR 0.45s ease-in-out infinite alternate-reverse; }
+@keyframes armWaveL { from { transform: rotate(20deg); } to { transform: rotate(125deg); } }
+@keyframes armWaveR { from { transform: rotate(-20deg); } to { transform: rotate(-125deg); } }
+
+/* wow: big eyes, a jump back */
+.mascot[data-mood="wow"] .m-all { animation: mWow 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) forwards; }
+@keyframes mWow {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12) translateY(-10px); }
+  100% { transform: scale(1.06); }
+}
+.mascot[data-mood="wow"] .m-arm-l { transform: rotate(70deg); }
+.mascot[data-mood="wow"] .m-arm-r { transform: rotate(-70deg); }
+
+/* sad: deflate */
+.mascot[data-mood="sad"] .m-all { animation: none; transform: translateY(6px) scale(1.02, 0.95); transition: transform 0.4s; }
+.mascot[data-mood="sad"] .m-arm-l { transform: rotate(-12deg); }
+.mascot[data-mood="sad"] .m-arm-r { transform: rotate(12deg); }
+
+/* focus: lean in, trembling with suspense */
+.mascot[data-mood="focus"] .m-all { animation: mFocus 0.12s ease-in-out infinite alternate; }
+@keyframes mFocus {
+  from { transform: scale(1.04) translate(-1px, -3px); }
+  to { transform: scale(1.04) translate(1px, -3px); }
+}
+
+/* DJ Pina */
+.mascot-neon .pina-leaves { transform-origin: 50% 100%; animation: leafSway 2.6s ease-in-out infinite; }
+@keyframes leafSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+.mascot-neon:is([data-mood="dance"], [data-mood="cheer"]) .pina-leaves { animation-duration: 0.45s; }
+.mascot-neon[data-mood="sad"] .pina-leaves { animation: none; transform: rotate(-8deg) scaleY(0.82); }
+.mascot-neon .pina-shades { transform-origin: 50% 50%; transition: transform 0.25s cubic-bezier(0.2, 1.6, 0.4, 1); }
+.mascot-neon[data-mood="wow"] .pina-shades { transform: translateY(-28px) scale(0.94); }
+.mascot-neon:is([data-mood="dance"], [data-mood="cheer"]) .pina-shades { animation: shadeFlash 0.3s steps(2) infinite; }
+@keyframes shadeFlash { 50% { opacity: 0.55; } }
+
+/* Ember */
+.mascot-dragon .em-wing-l { transform-origin: 100% 55%; animation: wingL 2.6s ease-in-out infinite; }
+.mascot-dragon .em-wing-r { transform-origin: 0% 55%; animation: wingR 2.6s ease-in-out infinite; }
+@keyframes wingL { 50% { transform: rotate(-10deg); } }
+@keyframes wingR { 50% { transform: rotate(10deg); } }
+.mascot-dragon:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="fire"], [data-mood="wow"]) .em-wing-l { animation: wingFastL 0.22s ease-in-out infinite alternate; }
+.mascot-dragon:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="fire"], [data-mood="wow"]) .em-wing-r { animation: wingFastR 0.22s ease-in-out infinite alternate; }
+@keyframes wingFastL { from { transform: rotate(8deg); } to { transform: rotate(-28deg); } }
+@keyframes wingFastR { from { transform: rotate(-8deg); } to { transform: rotate(28deg); } }
+.mascot-dragon[data-mood="sad"] .em-wing-l { animation: none; transform: rotate(18deg); }
+.mascot-dragon[data-mood="sad"] .em-wing-r { animation: none; transform: rotate(-18deg); }
+.mascot-dragon .em-tail { transform-origin: 0% 85%; animation: tail 2s ease-in-out infinite; }
+@keyframes tail { 50% { transform: rotate(-8deg); } }
+.mascot-dragon .m-head { transform-origin: 50% 85%; transition: transform 0.25s ease-out; }
+.mascot-dragon .em-flame { transform-origin: 50% 0%; transform: scale(0); opacity: 0; }
+.mascot-dragon[data-mood="fire"] .m-head { transform: rotate(-22deg); }
+.mascot-dragon[data-mood="fire"] .em-flame { opacity: 1; animation: flame 0.14s ease-in-out infinite alternate; }
+@keyframes flame {
+  from { transform: scale(1, 0.92); }
+  to { transform: scale(1.14, 1.18); }
+}
+
+/* Zib */
+.mascot-cosmic .m-all { animation: zHover 2.2s ease-in-out infinite; }
+@keyframes zHover {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-9px) rotate(2deg); }
+}
+.mascot-cosmic .zb-ant { transform-origin: 50% 100%; animation: antWob 1.6s ease-in-out infinite; }
+@keyframes antWob {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.mascot-cosmic[data-mood="sad"] .zb-ant { animation: none; transform: scaleY(0.75) rotate(4deg); }
+.mascot-cosmic .zb-lights circle { animation: zLight 1.05s steps(1) infinite; animation-delay: calc(var(--i) * -0.15s); }
+@keyframes zLight { 50% { opacity: 0.25; } }
+.mascot-cosmic:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="beam"]) .zb-lights circle { animation-duration: 0.3s; animation-delay: calc(var(--i) * -0.04s); }
+.mascot-cosmic[data-mood="cheer"] .m-all, .mascot-cosmic[data-mood="dance"] .m-all { animation: zLoop 0.8s ease-in-out infinite; }
+@keyframes zLoop {
+  0%, 100% { transform: translateY(0) rotate(-12deg); }
+  50% { transform: translateY(-16px) rotate(12deg); }
+}
+.mascot-cosmic .zb-beam { opacity: 0; transform-origin: 50% 0%; transform: scaleY(0.2); transition: opacity 0.2s, transform 0.3s; }
+.mascot-cosmic[data-mood="beam"] .zb-beam { opacity: 1; transform: none; animation: beamPulse 0.35s ease-in-out infinite alternate; }
+@keyframes beamPulse { to { opacity: 0.55; } }
+.mascot-cosmic[data-mood="beam"] .m-all { animation: zHover 0.6s ease-in-out infinite; }
+
+/* speech bubble */
+.mascot-bubble {
+  position: absolute;
+  z-index: 3;
+  left: 62%;
+  top: -4%;
+  padding: 6px 11px 5px;
+  border-radius: 14px;
+  font-family: var(--f-display, "Arial Black", sans-serif);
+  font-size: 12px;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #1b0b33;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+.mascot-bubble::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: -7px;
+  border: 8px solid transparent;
+  border-top-color: #fff;
+  border-bottom: 0;
+}
+.mascot-bubble.pop { animation: bubblePop 0.35s cubic-bezier(0.2, 1.8, 0.4, 1); }
+@keyframes bubblePop { from { transform: scale(0.2) translateY(10px); opacity: 0; } }

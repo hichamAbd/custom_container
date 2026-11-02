@@ -1,8 +1,10 @@
 # Reel Riot Casino
 
-A flashy, phone-first slot machine game with three machines, progressive
-jackpots and a settings popup (the "Control Room") where you can make jackpots
-rarer or more frequent and set your coin balance by hand.
+A flashy, phone-first slot machine game: three themed machines, each hosted by
+an animated mascot, with its own jackpot bonus game, plus levels, a daily login
+streak, daily missions and timed bonuses. A settings popup (the "Control Room")
+lets you override everything: coins, jackpot odds, level and XP, the streak,
+timers, missions, and even the result of the next spin.
 
 It is plain HTML, CSS and JavaScript with no build step and no dependencies.
 Coins are for fun only and have no cash value.
@@ -29,45 +31,83 @@ server. Space bar spins.
 
 ## The three machines
 
-| Machine | Grid | How it pays | Signature features | Risk |
-| --- | --- | --- | --- | --- |
-| Neon Fruit Frenzy | 5 × 3 | 20 paylines | Wilds on reels 2-4, free spins where every win pays ×3 | Low |
-| Dragon's Hoard | 5 × 4 | 1,024 ways | Dragon Fire turns random symbols into wilds; free spins with sticky wilds | Medium |
-| Cosmic Cascade | 6 × 5 | Clusters of 5+ touching symbols | Winning clusters explode and new symbols fall in; every cascade raises the multiplier (×1 up to ×20), and in free spins the multiplier never resets | High |
+| Machine | Host | Grid | How it pays | Signature feature | Jackpot game | Risk |
+| --- | --- | --- | --- | --- | --- | --- |
+| Neon Fruit Frenzy | DJ Pina, a pineapple in neon shades | 5 × 3 | 20 paylines | Free spins where every win pays ×3 | Jackpot Pick | Low |
+| Dragon's Hoard | Ember, a baby dragon | 5 × 4 | 1,024 ways | Ember breathes Dragon Fire to turn symbols wild; free spins with sticky wilds | Hold & Spin | Medium |
+| Cosmic Cascade | Zib, an alien in a flying saucer | 6 × 5 | Clusters of 5+ touching symbols | Winning clusters explode and new symbols fall in; every cascade raises the multiplier (×1 up to ×20), and in free spins it never resets | Rocket Jackpot | High |
 
-Every machine has:
+**Mascots.** Each host sits on top of its machine, idles (bobbing, blinking,
+wings flapping, antennae wobbling) and reacts to what happens: it leans in when
+the reels slow down for a possible bonus, hops on small wins, cheers on bigger
+ones, sulks after a cold streak, and talks in speech bubbles. Ember actually
+breathes the Dragon Fire onto the reels and Zib beams the cascades. The hosts
+also star in the big win, free spins, jackpot and level-up scenes, and on the
+lobby cards.
 
-- **Wilds** that stand in for normal symbols.
-- **Bonus symbols** (scatters): 3 or more anywhere pay and start free spins,
-  which can retrigger.
-- **Jackpot coins**: 3 or more spin the **Jackpot Wheel** for the Mini, Minor,
-  Major or Grand jackpot. When 2 bonus symbols or 2 coins have landed, the
-  remaining reels slow down with a glowing frame for suspense.
-- **Progressive jackpots** that grow a little with every spin and scale with
-  your bet (the Grand is 1,000 to 3,000 times the bet).
-- **Big win celebrations**: Big (10× bet), Mega (25×), Epic (50×) and
-  Legendary (100×), with a counter that climbs through the tiers, coin showers
-  and fireworks.
-- Autoplay (10, 25, 50, 100 or until stopped), turbo spins, tap-to-stop reels,
-  a paytable that shows real coin amounts for your current bet, synthesized
-  sound effects and music, and vibration on Android phones.
+**Jackpot games.** Landing 3 or more jackpot coins starts the machine's game:
 
-The lobby also has a free coin wheel every 10 minutes, and an "out of coins"
-top-up so the fun never stops.
+- **Jackpot Pick** (Neon): 12 tiles hide 3 of each jackpot. Tap to flip them;
+  the first jackpot you find 3 times is yours, then the rest are revealed.
+- **Hold & Spin** (Dragon): the coins lock in place and you get 3 respins.
+  Every new coin resets the respins and carries a cash prize or a Mini, Minor
+  or Major jackpot; filling all 20 spots wins the Grand.
+- **Rocket Jackpot** (Cosmic): Zib's rocket counts down and blasts off past
+  the Mini, Minor, Major and Grand rings. The highest ring it reaches is your
+  jackpot, sometimes after a nail-biting sputter just below the next one.
+
+**Free spins** open with a full-screen scene (a burst of light, the host
+dancing, the spin count rolling up), change the machine's scenery while they
+last (neon spotlights, rising embers, hyperspace streaks), and end with a
+total-win scene. **Big wins** climb through Big (10× bet), Mega (25×), Epic
+(50×) and Legendary (100×) with coin showers and fireworks.
+
+## Ways to earn coins
+
+The economy is deliberately tight, like an app-store slot. Every reward below
+grows by 5% for each level above 1.
+
+| Source | Reward at level 1 | How often |
+| --- | --- | --- |
+| Daily login streak | 300K, 500K, 750K, 1M, 1.5M, 2M, then 4M on day 7 | Once a day. Missing a day restarts at day 1; after day 7 it starts over |
+| Free coins | 200K | Every hour |
+| Bonus wheel | 250K to 10M (usually 250K to 1M) | Every 4 hours |
+| Daily missions | Easy 200K + 150 XP, medium 400K + 300 XP, hard 750K + 500 XP | 3 new missions every day |
+| Mission chest | 1.5M + 1,000 XP | When all 3 missions are claimed |
+| Level-ups | 210K at level 2, 590K at level 5, 1.3M at level 10, 2.7M at level 20 | Every level |
+| Rescue coins | 1M | When you can't afford the smallest bet, at most every 15 minutes |
+
+Every paid spin earns XP: 10 × the square root of (bet ÷ 1,000), so a 100K
+bet earns 100 XP. Level 2 needs 600 XP and each level needs a little more.
+Levels never lock machines or bets; everything is open from the start.
+
+Missions come from a pool, one easy, one medium and one hard each day: spin or
+win a number of times, bet or win an amount, play a given machine, land
+bonus symbols or jackpot coins, win 3 spins in a row, trigger Dragon Fire,
+chain cascades, land a Big Win or trigger free spins.
 
 ## The Control Room (settings popup)
 
-Tap the sliders icon at the top right.
+Tap the sliders icon at the top right. It has five tabs:
 
-- **Jackpot frequency** slider, from ×0.02 (nearly impossible) through ×1
-  (normal) to ×50 (jackpot party). A table shows the live chance of each
-  jackpot per spin, what it is worth right now, and the long-run return of the
-  machine at that setting.
-- **Coins**: type any amount, drag the slider (0 to 1 trillion, logarithmic),
-  or use the quick buttons (+1M, +100M, +10B, reset to 10M).
-- Sound effects, music, vibration and turbo switches.
-- Your stats (spins, wagered, won, your actual return, biggest win, jackpots
-  hit) and a reset.
+- **Jackpots**: the jackpot frequency slider, from ×0.02 (nearly impossible)
+  through ×1 (normal) to ×50 (jackpot party), with a live table of each
+  jackpot's chance per spin and current value, and the machine's long-run
+  return at that setting.
+- **Coins & XP**: type any coin amount, drag the coin slider (0 to 1 trillion)
+  or use the quick buttons. Set your level, drag your XP toward the next level,
+  add 1,000 XP, play a real level-up with its reward, or go back to level 1.
+- **Bonuses**: choose which day of the login streak you collect today,
+  simulate the next day, break the streak, make free coins, the bonus wheel or
+  rescue coins ready now, switch on fast timers (1 to 2 minutes), jump the game
+  clock 1 hour or 1 day ahead (or back to real time), complete any of today's
+  missions, or roll new ones.
+- **Test lab**: force the next spin to give free spins, any of the four
+  jackpots, a Big, Mega, Epic or Legendary win, the machine's feature, or a
+  near miss; and open the level-up, daily bonus, missions or out-of-coins
+  screens on demand.
+- **Options**: sound effects, music, vibration, turbo, your stats, and a full
+  reset.
 
 Progress is saved in the browser, including a free spins round in progress if
 you close the page mid-round.
@@ -76,15 +116,16 @@ you close the page mid-round.
 
 Each machine is tuned so the house keeps a small edge at the normal jackpot
 setting, small wins come often, and jackpots are rare. Every number below
-comes from 2,000,000 simulated spins per machine using the same engine code
-the game runs (`node tools/simulate.js`).
+comes from simulating millions of spins with the same engine code the game
+runs (`node tools/simulate.js`).
 
 | | Neon Fruit Frenzy | Dragon's Hoard | Cosmic Cascade |
 | --- | --- | --- | --- |
-| Long-run return | 96.4% | 96.3% | 96.3% |
+| Long-run return | 96.4% | 96.3% | 96.5% |
 | Spins that pay something | 39% | 58% | 32% |
-| Free spins | 1 in 136 spins, avg 24× bet | 1 in 158, avg 34× | 1 in 188, avg 52× |
-| Big wins (10×+) | 1 in 80 spins | 1 in 72 | 1 in 85 |
+| Free spins | 1 in 135 spins, avg 24× bet | 1 in 158, avg 34× | 1 in 188, avg 52× |
+| Machine feature | | Dragon Fire 1 in 44, avg 7.4× | about 0.38 cascades per spin |
+| Big wins (10×+) | 1 in 80 spins | 1 in 74 | 1 in 86 |
 
 Jackpot odds per spin at the normal (×1) setting, with the starting prize as a
 multiple of the bet:
@@ -104,6 +145,10 @@ How it works:
   placed on the reels to match. That keeps the jackpot odds exact, so the
   Control Room slider simply multiplies them. Spins that miss sometimes still
   show one or two coins as a tease.
+- The jackpot games are shows built around that decided result: the pick'em
+  board and the rocket always land on the jackpot already won. Hold & Spin is
+  generated by the engine for the decided jackpot, including every cash coin,
+  so its coins are part of the measured return (about 6.4× the bet per round).
 - About 15% extra on top of each jackpot's base return feeds its progressive
   growth, which resets to the starting value when it is won. Prizes are capped
   at three times the starting value.
@@ -118,17 +163,22 @@ To retune, edit the weights or paytables in `js/machines.js`, then run:
 node tools/simulate.js              # 1,000,000 spins per machine
 node tools/simulate.js 5000000 neon # more spins, one machine
 node tools/simulate.js --factor 5   # with jackpots 5x more frequent
-node tools/simulate.js --update     # store the measured return for the settings popup
+node tools/simulate.js --update     # store the measured returns for the settings popup
 ```
 
 ## Files
 
 ```
 index.html            page markup
-css/style.css         all styling and the three themes
-js/engine.js          math engine: RNG, spins, lines/ways/clusters, cascades, jackpots
+css/style.css         core styling and the three themes
+css/mascots.css       mascot moods and animations
+css/features.css      jackpot games, free spins scenery, rewards and Control Room tabs
+js/engine.js          math engine: RNG, spins, lines/ways/clusters, cascades, jackpots, Hold & Spin
 js/machines.js        the three machines: symbols, weights, paytables, features
-js/app.js             game controller: reels, animations, features, settings, saving
+js/progress.js        levels and XP, login streak, missions, timed bonuses, test clock
+js/mascots.js         the three hosts drawn as animated SVG
+js/bonus.js           the jackpot games: Jackpot Pick, Hold & Spin, Rocket Jackpot
+js/app.js             game controller: reels, animations, features, rewards, settings, saving
 js/audio.js           synthesized sound effects and music (Web Audio, no files)
 js/fx.js              particle effects (coins, sparks, confetti, fireworks)
 tools/simulate.js     balance simulator
@@ -138,5 +188,6 @@ icons/                app icons
 ```
 
 Tip for tinkering: in the browser console, `ReelRiot.force('grand')` makes the
-next spin hit the Grand jackpot (also `fs`, `jackpot`, `big`, `mega`, `epic`,
-`legendary`, `fire`, `cascade`).
+next spin hit the Grand jackpot (also `fs`, `mini`, `minor`, `major`, `big`,
+`mega`, `epic`, `legendary`, `feature`, `tease`). The Test lab tab does the
+same from the Control Room.
