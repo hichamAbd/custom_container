@@ -1,0 +1,16 @@
+{
+  "name": "Reel Riot Casino",
+  "short_name": "Reel Riot",
+  "description": "Three flashy slot machines with progressive jackpots. Free play, no real money.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090414",
+  "theme_color": "#090414",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

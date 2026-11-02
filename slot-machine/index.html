@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reel Riot Casino</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090414">
+<meta name="description" content="Three flashy slot machines with progressive jackpots. Free play, no real money.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Reel Riot">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- HEAD:START -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Bungee&family=Cinzel+Decorative:wght@700;900&family=Monoton&display=swap">
+<!-- HEAD:END -->
+<link rel="stylesheet" href="css/style.css">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<!-- APP:START -->
+<div id="app" class="app" data-machine="neon">
+  <div class="sky" aria-hidden="true"></div>
+
+  <main id="lobby" class="screen lobby" aria-label="Lobby">
+    <header class="lobby-head">
+      <div class="logo" aria-label="Reel Riot Casino">
+        <span class="logo-line"><span class="logo-word">REEL</span><span class="logo-word logo-word-2">RI<span class="flicker">O</span>T</span></span>
+        <span class="logo-sub">Casino &middot; free play, no real money</span>
+      </div>
+      <button type="button" class="icon-btn" id="btn-settings-lobby" aria-label="Open the Control Room">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
+      </button>
+    </header>
+
+    <section class="wallet" aria-label="Your coins">
+      <span class="wallet-label">Your coins</span>
+      <span class="wallet-value fit" id="lobby-balance">10,000,000</span>
+      <button type="button" class="bonus-btn" id="btn-bonus">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.2C7 7 9 7 12 7zm0 0c1.5-3 5-3.5 5-1.2C17 7 15 7 12 7z"/></svg>
+        <span id="bonus-text">Spin the free coin wheel</span>
+      </button>
+    </section>
+
+    <h2 class="section-title">Pick a machine</h2>
+    <div class="cabinets" id="cabinets"></div>
+    <p class="lobby-foot" id="lobby-stats"></p>
+  </main>
+
+  <main id="machine" class="screen machine" hidden aria-label="Slot machine">
+    <header class="topbar">
+      <button type="button" id="btn-back" class="icon-btn" aria-label="Back to the lobby">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="balance-pill">
+        <span class="pill-label">Coins</span>
+        <span class="pill-value fit" id="balance">0</span>
+      </div>
+      <button type="button" id="btn-sound" class="icon-btn" aria-label="Mute sound" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path class="spk-on" d="M15.5 9.5a3.5 3.5 0 010 5M18 7a7 7 0 010 10"/><path class="spk-off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+      </button>
+      <button type="button" id="btn-settings" class="icon-btn" aria-label="Open the Control Room">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>
+      </button>
+    </header>
+
+    <section class="jackpots" aria-label="Progressive jackpots">
+      <div class="jp jp-grand"><span class="jp-name">Grand</span><span class="jp-val fit" id="jp-grand">0</span></div>
+      <div class="jp-row">
+        <div class="jp jp-major"><span class="jp-name">Major</span><span class="jp-val fit" id="jp-major">0</span></div>
+        <div class="jp jp-minor"><span class="jp-name">Minor</span><span class="jp-val fit" id="jp-minor">0</span></div>
+        <div class="jp jp-mini"><span class="jp-name">Mini</span><span class="jp-val fit" id="jp-mini">0</span></div>
+      </div>
+    </section>
+
+    <section class="stage-col">
+      <div class="stage-head">
+        <div class="title-row">
+          <h1 class="m-name" id="m-name">Neon Fruit Frenzy</h1>
+          <button type="button" id="btn-info" class="info-btn" aria-label="Paytable and rules">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.2v.1"/></svg>
+          </button>
+        </div>
+        <div class="ladder" id="ladder" hidden></div>
+        <div class="fs-banner" id="fs-banner" hidden>
+          <span class="fs-label">Free spins</span>
+          <span class="fs-count"><b id="fs-left">0</b> left</span>
+          <span class="fs-extra" id="fs-extra"></span>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="cabinet" id="cabinet">
+          <div class="bulbs" id="bulbs" aria-hidden="true"></div>
+          <div class="reels-wrap" id="reels-wrap">
+            <div class="reels" id="reels" aria-hidden="true"></div>
+            <div class="sticky" id="sticky" aria-hidden="true"></div>
+            <svg class="paylines" id="paylines" aria-hidden="true"></svg>
+            <div class="reel-fx" id="reel-fx" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls">
+      <div class="winbar" id="winbar">
+        <span class="win-label" id="win-label">Win</span>
+        <span class="win-value fit" id="win-value">0</span>
+        <span class="win-msg" id="win-msg" role="status" aria-live="polite">Good luck!</span>
+      </div>
+      <div class="deck">
+        <div class="bet">
+          <div class="bet-box"><span class="bet-label">Bet</span><span class="bet-value fit" id="bet-value">100K</span></div>
+          <button type="button" id="bet-down" class="bet-btn" aria-label="Lower the bet">&minus;</button>
+          <button type="button" id="bet-up" class="bet-btn" aria-label="Raise the bet">+</button>
+        </div>
+        <button type="button" id="btn-spin" class="spin-btn" aria-label="Spin">
+          <span class="spin-label" id="spin-label">Spin</span>
+          <span class="spin-sub" id="spin-sub"></span>
+        </button>
+        <div class="side">
+          <button type="button" id="btn-auto" class="side-btn" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 0112-4.9M19 12a7 7 0 01-12 4.9"/><path d="M17.5 3.5v4h-4M6.5 20.5v-4h4"/></svg>
+            <span id="auto-label">Auto</span>
+          </button>
+          <button type="button" id="btn-turbo" class="side-btn" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/></svg>
+            <span>Turbo</span>
+          </button>
+        </div>
+      </div>
+      <div class="auto-menu" id="auto-menu" hidden>
+        <span class="auto-title">Auto spins</span>
+        <button type="button" data-auto="10">10</button>
+        <button type="button" data-auto="25">25</button>
+        <button type="button" data-auto="50">50</button>
+        <button type="button" data-auto="100">100</button>
+        <button type="button" data-auto="Infinity" aria-label="Until stopped">&infin;</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay ov-bigwin" id="ov-bigwin" hidden>
+    <div class="rays" aria-hidden="true"></div>
+    <div class="bw-card">
+      <div class="bw-title" id="bw-title">Big win</div>
+      <div class="bw-amount fit" id="bw-amount">0</div>
+      <div class="bw-x" id="bw-x"></div>
+      <div class="bw-hint" id="bw-hint">Tap to continue</div>
+    </div>
+  </div>
+
+  <div class="overlay ov-feature" id="ov-feature" hidden>
+    <div class="rays rays-soft" aria-hidden="true"></div>
+    <div class="feature-card">
+      <div class="ft-kicker" id="ft-kicker">You won</div>
+      <div class="ft-big fit" id="ft-big">10</div>
+      <div class="ft-title" id="ft-title">Free spins</div>
+      <div class="ft-sub" id="ft-sub"></div>
+      <button type="button" class="btn-gold" id="ft-btn">Start</button>
+    </div>
+  </div>
+
+  <div class="overlay ov-wheel" id="ov-wheel" hidden>
+    <div class="wheel-card">
+      <div class="wheel-title" id="wheel-title">Jackpot wheel</div>
+      <div class="wheel-wrap">
+        <canvas id="wheel" class="wheel-canvas" width="640" height="640"></canvas>
+        <div class="wheel-pointer" id="wheel-pointer" aria-hidden="true"></div>
+        <button type="button" class="wheel-hub" id="wheel-hub">Spin</button>
+      </div>
+      <div class="wheel-sub" id="wheel-sub">Tap SPIN to find your jackpot</div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-settings" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="sheet">
+      <header class="sheet-head">
+        <h2 id="settings-title">Control Room</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close the Control Room">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <section class="ctl" aria-labelledby="jp-freq-label">
+        <div class="ctl-head">
+          <label id="jp-freq-label" for="jp-freq">Jackpot frequency</label>
+          <output id="jp-freq-out" for="jp-freq">&times;1 &middot; Normal</output>
+        </div>
+        <input type="range" id="jp-freq" min="-1.7" max="1.7" step="0.01" value="0">
+        <div class="range-ends"><span>Rarer</span><button type="button" class="link-btn" id="jp-reset">Back to normal</button><span>More often</span></div>
+        <div class="odds-tabs" id="odds-tabs" role="tablist" aria-label="Machine"></div>
+        <table class="odds" id="odds-table">
+          <thead><tr><th scope="col">Jackpot</th><th scope="col">Chance per spin</th><th scope="col">Worth now</th></tr></thead>
+          <tbody id="odds-body"></tbody>
+        </table>
+        <p class="odds-foot" id="odds-foot"></p>
+      </section>
+
+      <section class="ctl" aria-labelledby="bal-label">
+        <div class="ctl-head">
+          <label id="bal-label" for="bal-input">Coins</label>
+          <output id="bal-out" for="bal-input bal-slider">0</output>
+        </div>
+        <div class="bal-row">
+          <input type="number" id="bal-input" inputmode="numeric" min="0" step="1" aria-describedby="bal-hint">
+          <button type="button" class="btn-small" id="bal-set">Set coins</button>
+        </div>
+        <input type="range" id="bal-slider" min="0" max="12" step="0.01" value="7" aria-label="Coins, logarithmic scale">
+        <div class="range-ends" id="bal-hint"><span>0</span><span>1 million</span><span>1 trillion</span></div>
+        <div class="chips">
+          <button type="button" data-add="1000000">+1M</button>
+          <button type="button" data-add="100000000">+100M</button>
+          <button type="button" data-add="10000000000">+10B</button>
+          <button type="button" data-set="10000000">Reset to 10M</button>
+        </div>
+      </section>
+
+      <section class="ctl toggles" aria-label="Options">
+        <label class="tog"><input type="checkbox" id="opt-sound"><span>Sound effects</span></label>
+        <label class="tog"><input type="checkbox" id="opt-music"><span>Music</span></label>
+        <label class="tog"><input type="checkbox" id="opt-vibrate"><span>Vibration</span></label>
+        <label class="tog"><input type="checkbox" id="opt-turbo"><span>Turbo spins</span></label>
+      </section>
+
+      <section class="ctl" aria-labelledby="stats-title">
+        <div class="ctl-head">
+          <h3 id="stats-title">Your stats</h3>
+          <button type="button" class="link-btn" id="stats-reset">Reset stats</button>
+        </div>
+        <dl class="stats" id="stats"></dl>
+      </section>
+
+      <section class="ctl ctl-danger">
+        <button type="button" class="btn-danger" id="reset-all">Reset everything</button>
+        <p class="fine">Puts coins, jackpots, stats and settings back to the start.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-info" hidden role="dialog" aria-modal="true" aria-labelledby="info-title">
+    <div class="sheet">
+      <header class="sheet-head">
+        <h2 id="info-title">Paytable</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close the paytable">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div id="info-body" class="info-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-broke" hidden role="dialog" aria-modal="true" aria-labelledby="broke-title">
+    <div class="sheet sheet-small">
+      <h2 id="broke-title">Out of coins</h2>
+      <p class="broke-text">The house had a good run. Grab a free top-up and keep spinning.</p>
+      <button type="button" class="btn-gold" id="broke-collect">Collect 10,000,000</button>
+      <button type="button" class="link-btn" id="broke-settings">Set coins in the Control Room</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <canvas class="fx" id="fx" aria-hidden="true"></canvas>
+</div>
+<!-- APP:END -->
+<script src="js/engine.js"></script>
+<script src="js/machines.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
