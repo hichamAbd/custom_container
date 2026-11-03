@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git Guestbook</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#1b1f24; --muted:#5b6470; --line:#d9dee4; --accent:#1f6feb; --danger:#cf222e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0d1117; --card:#161b22; --fg:#e6edf3; --muted:#8d96a0; --line:#30363d; --accent:#4493f8; --danger:#f85149; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; }
+  label { display:block; font-weight:600; margin:10px 0 4px; }
+  input, textarea { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); font:inherit; }
+  textarea { min-height: 90px; resize: vertical; }
+  button, .btn { display:inline-block; padding:8px 14px; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--fg); font:inherit; cursor:pointer; text-decoration:none; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.6; cursor:wait; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+  .entry { border-top:1px solid var(--line); padding:12px 0; }
+  .entry:first-child { border-top:0; }
+  .entry .meta { color:var(--muted); font-size:13px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .entry .msg { white-space:pre-wrap; word-wrap:break-word; margin-top:4px; }
+  .entry button { padding:2px 8px; font-size:12px; color:var(--danger); margin-left:auto; }
+  .status { font-size:13px; color:var(--muted); min-height:1.5em; }
+  .status.err { color:var(--danger); }
+  details summary { cursor:pointer; font-weight:600; }
+  code { font-size:13px; }
+  a { color:var(--accent); }
+  ul.hist { padding-left:18px; margin:8px 0 0; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Git Guestbook</h1>
+  <p class="sub">Every message here is stored as a commit in <a id="repoLink" href="#"></a>. No server, no database: the git history is the database.</p>
+
+  <div class="card">
+    <label for="name">Your name</label>
+    <input id="name" maxlength="80" placeholder="Anonymous">
+    <label for="msg">Message</label>
+    <textarea id="msg" maxlength="2000" placeholder="Say something…"></textarea>
+    <div class="row">
+      <button class="primary" id="saveBtn">Save (commit directly)</button>
+      <button id="issueBtn" title="No token needed: opens a pre-filled GitHub issue, a GitHub Action commits it">Submit via GitHub issue</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="margin-top:0;justify-content:space-between">
+      <strong id="count">Entries</strong>
+      <button id="reloadBtn">Reload</button>
+    </div>
+    <div id="entries"><p class="status">Loading…</p></div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>Settings (GitHub token for direct commits)</summary>
+      <p class="status">To commit straight from the browser, paste a
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained personal access token</a>
+        limited to this repository with <b>Contents: Read and write</b>. It stays in this browser's localStorage and is sent only to api.github.com.
+        Without a token, use “Submit via GitHub issue”.</p>
+      <label for="token">Token</label>
+      <input id="token" type="password" autocomplete="off" placeholder="github_pat_…">
+      <div class="row">
+        <button id="saveToken">Save token</button>
+        <button id="clearToken">Forget token</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>Commit history of the data file</summary>
+      <ul class="hist" id="history"></ul>
+    </details>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script>
+(() => {
+  // ---- config (auto-detect owner/repo when served from GitHub Pages) ----
+  const cfg = Object.assign({}, window.GITDB_CONFIG);
+  const host = location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if (host) {
+    cfg.owner = host[1];
+    const first = location.pathname.split("/").filter(Boolean)[0];
+    if (first) cfg.repo = first;
+  }
+  const API = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}`;
+  const $ = id => document.getElementById(id);
+  $("repoLink").textContent = `${cfg.owner}/${cfg.repo}`;
+  $("repoLink").href = `https://github.com/${cfg.owner}/${cfg.repo}/commits/${cfg.branch}/${cfg.dataPath}`;
+
+  // ---- token storage (guarded: storage may be unavailable) ----
+  const TOKEN_KEY = "gitdb-token";
+  const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } };
+  const setToken = t => { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} };
+  try { $("name").value = localStorage.getItem("gitdb-name") || ""; } catch {}
+
+  // ---- helpers ----
+  const b64encode = s => { const bytes = new TextEncoder().encode(s); let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b)); return btoa(bin); };
+  const b64decode = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g, "")), c => c.charCodeAt(0)));
+  const status = (text, err) => { $("status").textContent = text; $("status").className = "status" + (err ? " err" : ""); };
+
+  async function gh(path, opts = {}) {
+    const headers = { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    if (opts.body) headers["Content-Type"] = "application/json";
+    const res = await fetch(API + path, Object.assign({ cache: "no-store" }, opts, { headers }));
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const e = new Error(`${res.status}: ${body.message || res.statusText}`); e.status = res.status; throw e;
+    }
+    return res.json();
+  }
+
+  // Read the data file: returns { entries, sha }
+  async function readData() {
+    try {
+      const f = await gh(`/contents/${cfg.dataPath}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`);
+      return { entries: JSON.parse(b64decode(f.content) || "[]"), sha: f.sha };
+    } catch (e) {
+      if (e.status === 404) return { entries: [], sha: undefined };
+      throw e;
+    }
+  }
+
+  // Apply a change and commit it. Retries if someone else committed in between (409/422 sha mismatch).
+  async function commitChange(mutate, message) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { entries, sha } = await readData();
+      const next = mutate(entries);
+      try {
+        const res = await gh(`/contents/${cfg.dataPath}`, {
+          method: "PUT",
+          body: JSON.stringify({ message, content: b64encode(JSON.stringify(next, null, 2) + "\n"), sha, branch: cfg.branch }),
+        });
+        return { entries: next, commit: res.commit };
+      } catch (e) {
+        if ((e.status === 409 || e.status === 422) && attempt < 2) continue;
+        throw e;
+      }
+    }
+  }
+
+  // ---- rendering ----
+  function render(entries) {
+    const box = $("entries");
+    $("count").textContent = `${entries.length} entr${entries.length === 1 ? "y" : "ies"}`;
+    box.innerHTML = "";
+    if (!entries.length) { box.innerHTML = '<p class="status">No entries yet. Be the first!</p>'; return; }
+    [...entries].reverse().forEach(e => {
+      const div = document.createElement("div"); div.className = "entry";
+      const meta = document.createElement("div"); meta.className = "meta";
+      const who = document.createElement("strong"); who.textContent = e.name || "Anonymous";
+      const when = document.createElement("span"); when.textContent = new Date(e.date).toLocaleString();
+      const via = document.createElement("span"); via.textContent = e.via === "issue" ? "· via issue" : "";
+      meta.append(who, when, via);
+      if (getToken()) {
+        const del = document.createElement("button"); del.textContent = "Delete";
+        del.onclick = () => removeEntry(e.id);
+        meta.append(del);
+      }
+      const msg = document.createElement("div"); msg.className = "msg"; msg.textContent = e.message;
+      div.append(meta, msg); box.append(div);
+    });
+  }
+
+  async function loadHistory() {
+    try {
+      const commits = await gh(`/commits?path=${encodeURIComponent(cfg.dataPath)}&sha=${encodeURIComponent(cfg.branch)}&per_page=15`);
+      const ul = $("history"); ul.innerHTML = "";
+      commits.forEach(c => {
+        const li = document.createElement("li");
+        const a = document.createElement("a"); a.href = c.html_url; a.target = "_blank"; a.rel = "noopener";
+        a.textContent = c.sha.slice(0, 7);
+        li.append(a, ` ${c.commit.message.split("\n")[0]} — ${new Date(c.commit.author.date).toLocaleString()}`);
+        ul.append(li);
+      });
+      if (!commits.length) ul.innerHTML = "<li>No commits yet.</li>";
+    } catch (e) { $("history").innerHTML = `<li>Could not load history (${e.message})</li>`; }
+  }
+
+  async function load() {
+    try { render((await readData()).entries); }
+    catch (e) { $("entries").innerHTML = `<p class="status err">Could not load data: ${e.message}${e.status === 403 ? " (API rate limit? add a token in Settings)" : ""}</p>`; }
+    loadHistory();
+  }
+
+  // ---- actions ----
+  function readForm() {
+    const name = $("name").value.trim().slice(0, 80);
+    const message = $("msg").value.trim().slice(0, 2000);
+    try { localStorage.setItem("gitdb-name", name); } catch {}
+    return { name, message };
+  }
+
+  $("saveBtn").onclick = async () => {
+    const { name, message } = readForm();
+    if (!message) return status("Write a message first.", true);
+    if (!getToken()) return status("No token set. Add one in Settings, or use “Submit via GitHub issue”.", true);
+    $("saveBtn").disabled = true; status("Committing…");
+    try {
+      const entry = { id: crypto.randomUUID(), name, message, date: new Date().toISOString(), via: "web" };
+      const { entries, commit } = await commitChange(list => [...list, entry], `guestbook: add entry from ${name || "Anonymous"}`);
+      render(entries); loadHistory(); $("msg").value = "";
+      status(`Saved as commit ${commit.sha.slice(0, 7)}.`);
+    } catch (e) { status(`Commit failed: ${e.message}`, true); }
+    finally { $("saveBtn").disabled = false; }
+  };
+
+  async function removeEntry(id) {
+    if (!confirm("Delete this entry? (It stays in git history.)")) return;
+    status("Committing deletion…");
+    try {
+      const { entries, commit } = await commitChange(list => list.filter(e => e.id !== id), `guestbook: delete entry ${id.slice(0, 8)}`);
+      render(entries); loadHistory(); status(`Deleted in commit ${commit.sha.slice(0, 7)}.`);
+    } catch (e) { status(`Delete failed: ${e.message}`, true); }
+  }
+
+  $("issueBtn").onclick = () => {
+    const { name, message } = readForm();
+    if (!message) return status("Write a message first.", true);
+    const body = "<!-- Submit this issue unchanged. A GitHub Action will commit it to the guestbook and close the issue. -->\n```json\n" +
+      JSON.stringify({ name, message }, null, 2) + "\n```\n";
+    const url = `https://github.com/${cfg.owner}/${cfg.repo}/issues/new?title=${encodeURIComponent("[guestbook] " + (name || "Anonymous"))}&body=${encodeURIComponent(body)}`;
+    window.open(url, "_blank", "noopener");
+    status("Opened GitHub. Submit the issue; the entry appears here after the Action commits it (about a minute).");
+  };
+
+  $("token").value = getToken();
+  $("saveToken").onclick = () => { setToken($("token").value.trim()); status("Token saved in this browser."); load(); };
+  $("clearToken").onclick = () => { setToken(""); $("token").value = ""; status("Token removed."); load(); };
+  $("reloadBtn").onclick = load;
+
+  load();
+})();
+</script>
+</body>
+</html>
