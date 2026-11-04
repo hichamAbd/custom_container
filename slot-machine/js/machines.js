@@ -107,7 +107,7 @@
       sword: { name: 'Crossed Swords', glyph: '⚔️', color: '#d9e2ec', pays: [0, 0, 0, 8, 22, 60] },
       ring: { name: 'Ruby Ring', glyph: '💍', color: '#ff6fae', pays: [0, 0, 0, 12, 40, 90] },
       crown: { name: 'Crown', glyph: '👑', color: '#ffd23f', pays: [0, 0, 0, 18, 60, 150] },
-      dragon: { name: 'Dragon', glyph: '🐉', color: '#ff4b3a', pays: [0, 0, 0, 30, 110, 400] },
+      dragon: { name: 'Dragon Eye', glyph: '🐉', color: '#ff4b3a', pays: [0, 0, 0, 30, 110, 400] },
       wild: { kind: 'wild', name: 'Fire Wild', glyph: 'WILD', text: true, color: '#ff7a1a' },
       scatter: { kind: 'scatter', name: 'Dragon Egg', glyph: '🥚', color: '#ffe08a' },
       coin: JACKPOT_SYMBOL

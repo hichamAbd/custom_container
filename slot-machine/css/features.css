@@ -865,3 +865,52 @@
 .cr-mission span { min-width: 0; }
 .force-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 .force-note { font-size: 15px; color: var(--gold-pale); }
+
+/* ------------------------------------------------- painted symbol art */
+
+.cell.art .tile {
+  background: radial-gradient(circle at 50% 40%, rgba(var(--c), 0.3), rgba(var(--c), 0.06) 60%, rgba(0, 0, 0, 0.28) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 210, 120, 0.16), inset 0 calc(var(--cell) * -0.06) calc(var(--cell) * 0.12) rgba(0, 0, 0, 0.35);
+}
+.g-art { width: 94%; height: 94%; }
+.g-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.cell.art.k-wild .g-art,
+.cell.art.k-coin .g-art { filter: drop-shadow(0 0 calc(var(--cell) * 0.1) rgba(255, 150, 40, 0.6)); }
+.g-art.g-scatter .g-pic { position: relative; }
+.g-ribbon {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
+  padding: 0.12em 0.45em 0.08em;
+  border-radius: 0.3em;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: calc(var(--cell) * 0.12);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: #fff3c4;
+  background: linear-gradient(180deg, #c0142e, #5a0010);
+  border: 1px solid #ffd257;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* real-time fire canvas (Dragon Fire) */
+.fire-fx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 45;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.fire-fx[hidden] { display: none; }

@@ -616,6 +616,15 @@
     const s = m.symbols[sym];
     const kind = s.kind || 'normal';
     let inner;
+    const art = window.SlotArt ? window.SlotArt.get(m.id, sym) : null;
+    if (art) {
+      const pic = '<img class="g-pic" src="' + art + '" alt="" draggable="false">';
+      if (kind === 'coin') inner = '<span class="g g-art g-art-coin">' + pic + '<b class="g-ribbon">JACKPOT</b></span>';
+      else if (kind === 'scatter') inner = '<span class="g g-art g-scatter">' + pic + '<span class="g-tag">BONUS</span></span>';
+      else inner = '<span class="g g-art">' + pic + '</span>';
+      c[sym] = '<div class="cell art k-' + kind + ' s-' + sym + '" style="--c:' + rgb(s.color) + '"><span class="tile"></span>' + inner + '</div>';
+      return c[sym];
+    }
     if (kind === 'coin') inner = '<span class="g g-coin"><b>JACK</b><b>POT</b></span>';
     else if (kind === 'wild') inner = '<span class="g g-wild">WILD</span>';
     else if (kind === 'scatter') inner = '<span class="g g-scatter"><span class="g-e">' + s.glyph + '</span><span class="g-tag">BONUS</span></span>';
@@ -824,7 +833,7 @@
     }).join('');
   }
 
-  function symLabel(m, id) { const s = m.symbols[id]; return s.text ? s.name : s.glyph; }
+  function symLabel(m, id) { const s = m.symbols[id]; return s.text || (window.SlotArt && window.SlotArt.has(m.id)) ? s.name : s.glyph; }
 
   function describe(w) {
     const m = rt.m;
@@ -1043,9 +1052,19 @@
     await sleep(state.settings.turbo ? 200 : 420, false);
     shake();
     cab.classList.add('on-fire');
-    const sweep = document.createElement('div');
-    sweep.className = 'fire-sweep';
-    $('#reel-fx').appendChild(sweep);
+    // Real fire from Ember's mouth when WebGL is available, the CSS sweep otherwise.
+    const mouth = rt.mascot && rt.mascot.querySelector('.em-mouth');
+    const gap = state.settings.turbo ? 70 : 150;
+    let sweep = null;
+    if (mouth && window.SlotFire && window.SlotFire.supported()) {
+      const mr = mouth.getBoundingClientRect();
+      const from = { x: mr.left + mr.width * 0.35, y: mr.top + mr.height * 0.5 };
+      window.SlotFire.breathe(from, res.fire.map(f => cellPoint(f[0], f[1])), 0.9 + res.fire.length * gap / 1000);
+    } else {
+      sweep = document.createElement('div');
+      sweep.className = 'fire-sweep';
+      $('#reel-fx').appendChild(sweep);
+    }
     setMsg('Ember breathes Dragon Fire!', true);
     await sleep(380, false);
     for (let i = 0; i < res.fire.length; i++) {
@@ -1059,10 +1078,10 @@
       FX.burst(p.x, p.y, '#ff7a1a', 16, 260);
       FX.burst(p.x, p.y, '#ffd84d', 8, 160);
       Sound.ignite();
-      await sleep(state.settings.turbo ? 70 : 150, false);
+      await sleep(gap, false);
     }
     await sleep(380, false);
-    sweep.remove();
+    if (sweep) sweep.remove();
     cab.classList.remove('on-fire');
     rt.grid = res.featureGrid;
   }

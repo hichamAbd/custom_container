@@ -221,3 +221,12 @@
 }
 .mascot-bubble.pop { animation: bubblePop 0.35s cubic-bezier(0.2, 1.8, 0.4, 1); }
 @keyframes bubblePop { from { transform: scale(0.2) translateY(10px); opacity: 0; } }
+
+/* realistic Ember: the head dips toward the reels to breathe fire */
+.mascot-dragon[data-mood="fire"] .m-head { transform: rotate(9deg); }
+.mascot-dragon .em-flame { transform-origin: 10% 50%; }
+/* both wings extend back to the left and pivot at the shoulder */
+.mascot-dragon .em-wing-r { transform-origin: 100% 85%; animation: wingL 2.6s ease-in-out -0.3s infinite; }
+.mascot-dragon:is([data-mood="happy"], [data-mood="cheer"], [data-mood="dance"], [data-mood="fire"], [data-mood="wow"]) .em-wing-r { animation: wingFastL 0.22s ease-in-out -0.06s infinite alternate; }
+.mascot-dragon[data-mood="sad"] .em-wing-l,
+.mascot-dragon[data-mood="sad"] .em-wing-r { animation: none; transform: rotate(-16deg); }

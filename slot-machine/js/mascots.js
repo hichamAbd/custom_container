@@ -25,6 +25,15 @@
     '<linearGradient id="emWing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c46bff"/><stop offset="1" stop-color="#5e17a8"/></linearGradient>' +
     '<linearGradient id="emHorn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbe6"/><stop offset="1" stop-color="#e3ad55"/></linearGradient>' +
     '<radialGradient id="emFlame" cx="0.5" cy="0.15" r="0.9"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.3" stop-color="#ffe066"/><stop offset="0.62" stop-color="#ff8a1a"/><stop offset="1" stop-color="#e0300a" stop-opacity="0.85"/></radialGradient>' +
+    // Ember (realistic)
+    '<radialGradient id="dgBody" cx="0.38" cy="0.28" r="0.85"><stop offset="0" stop-color="#ff7448"/><stop offset="0.3" stop-color="#d22a1c"/><stop offset="0.7" stop-color="#7a0a12"/><stop offset="1" stop-color="#360208"/></radialGradient>' +
+    '<linearGradient id="dgBelly" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a8"/><stop offset="0.5" stop-color="#e2a24a"/><stop offset="1" stop-color="#8a4c12"/></linearGradient>' +
+    '<linearGradient id="dgWing" x1="0.1" y1="0" x2="0.7" y2="1"><stop offset="0" stop-color="#d0432c"/><stop offset="0.55" stop-color="#7c0c1a"/><stop offset="1" stop-color="#36040e"/></linearGradient>' +
+    '<linearGradient id="dgWingFar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a1a1e"/><stop offset="1" stop-color="#26020a"/></linearGradient>' +
+    '<linearGradient id="dgHorn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="0.5" stop-color="#e3c690"/><stop offset="1" stop-color="#7a5a32"/></linearGradient>' +
+    '<radialGradient id="dgEye" cx="0.5" cy="0.5" r="0.6"><stop offset="0" stop-color="#fff8c0"/><stop offset="0.35" stop-color="#ffcc30"/><stop offset="0.75" stop-color="#ff6a00"/><stop offset="1" stop-color="#8a1a00"/></radialGradient>' +
+    '<radialGradient id="dgThroat" cx="0.35" cy="0.4" r="0.8"><stop offset="0" stop-color="#fff0a0"/><stop offset="0.35" stop-color="#ff9a2a"/><stop offset="0.75" stop-color="#b02008"/><stop offset="1" stop-color="#3a0004"/></radialGradient>' +
+    '<pattern id="dgScales" width="8" height="6" patternUnits="userSpaceOnUse"><path d="M0 6Q4 0 8 6M-4 3Q0 -3 4 3M4 3Q8 -3 12 3" fill="none" stroke="#2a0206" stroke-width="0.8"/><path d="M1.5 5Q4 1.5 6.5 5" fill="none" stroke="#ff9a6a" stroke-width="0.6" opacity="0.5"/></pattern>' +
     // Zib
     '<linearGradient id="zbHull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f6ff"/><stop offset="0.5" stop-color="#a9b4e2"/><stop offset="1" stop-color="#555f96"/></linearGradient>' +
     '<linearGradient id="zbRim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3ccf2"/></linearGradient>' +
@@ -93,39 +102,76 @@
       '</g>' +
     '</g></svg>';
 
+  // Ember: a crimson dragon drawn with lit, scaled surfaces (Dragon's Hoard).
   const EMBER = '<svg viewBox="0 0 220 250" class="mascot-svg" aria-hidden="true" focusable="false">' +
-    '<ellipse class="m-shadow" cx="110" cy="243" rx="62" ry="7"/>' +
+    '<ellipse class="m-shadow" cx="112" cy="243" rx="78" ry="7"/>' +
     '<g class="m-all">' +
-      '<g class="em-tail"><path d="M150 200C184 208 206 192 204 166C203 152 192 146 186 156" fill="none" stroke="#d6301a" stroke-width="16" stroke-linecap="round"/>' +
-        '<path d="M150 200C184 208 206 192 204 166" fill="none" stroke="#ff7a45" stroke-width="6" stroke-linecap="round" opacity="0.6"/><path d="M184 150L208 138L198 164Z" fill="#ffb21e" stroke="#c46a00" stroke-width="2"/></g>' +
-      '<g class="em-wing-l"><path d="M80 128C56 94 22 88 8 114C22 114 26 126 24 138C36 130 44 138 46 150C56 140 66 142 78 150Z" fill="url(#emWing)" stroke="#45107a" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M78 132L24 116M78 138L34 134M78 144L48 148" stroke="#45107a" stroke-width="2" opacity="0.6"/></g>' +
-      '<g class="em-wing-r"><path d="M140 128C164 94 198 88 212 114C198 114 194 126 196 138C184 130 176 138 174 150C164 140 154 142 142 150Z" fill="url(#emWing)" stroke="#45107a" stroke-width="3" stroke-linejoin="round"/>' +
-        '<path d="M142 132L196 116M142 138L186 134M142 144L172 148" stroke="#45107a" stroke-width="2" opacity="0.6"/></g>' +
-      '<g class="m-legs"><ellipse cx="84" cy="228" rx="23" ry="12" fill="url(#emBody)"/><ellipse cx="136" cy="228" rx="23" ry="12" fill="url(#emBody)"/>' +
-        '<path d="M68 234l4-6 4 6M80 236l4-6 4 6M92 234l4-6 4 6M124 234l4-6 4 6M136 236l4-6 4 6M148 234l4-6 4 6" fill="#fff6dc" stroke="#e0b37a" stroke-width="1"/></g>' +
-      '<g class="m-torso"><ellipse cx="110" cy="178" rx="55" ry="52" fill="url(#emBody)"/><ellipse cx="110" cy="188" rx="33" ry="38" fill="url(#emBelly)"/>' +
-        '<path d="M86 172Q110 179 134 172M83 187Q110 194 137 187M86 202Q110 209 134 202M92 216Q110 222 128 216" stroke="#e39a3f" stroke-width="2.5" fill="none" opacity="0.7"/></g>' +
-      '<g class="m-arm-l"><path d="M68 170C56 176 52 186 56 198" stroke="#e0441e" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="57" cy="200" r="8" fill="#ff7a45"/></g>' +
-      '<g class="m-arm-r"><path d="M152 170C164 176 168 186 164 198" stroke="#e0441e" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="163" cy="200" r="8" fill="#ff7a45"/></g>' +
-      '<g class="m-head">' +
-        '<path d="M80 64C70 46 72 32 82 20C86 36 92 48 98 60Z" fill="url(#emHorn)" stroke="#c98a3a" stroke-width="2"/>' +
-        '<path d="M140 64C150 46 148 32 138 20C134 36 128 48 122 60Z" fill="url(#emHorn)" stroke="#c98a3a" stroke-width="2"/>' +
-        '<path d="M62 94L42 82L62 108Z" fill="#ffb21e" stroke="#c46a00" stroke-width="2" stroke-linejoin="round"/><path d="M158 94L178 82L158 108Z" fill="#ffb21e" stroke="#c46a00" stroke-width="2" stroke-linejoin="round"/>' +
-        '<ellipse cx="110" cy="98" rx="52" ry="46" fill="url(#emBody)"/>' +
-        '<path d="M100 54L106 42L112 54L118 44L122 58" fill="#ffb21e" stroke="#c46a00" stroke-width="2" stroke-linejoin="round"/>' +
-        '<ellipse cx="110" cy="120" rx="32" ry="21" fill="#ff8f5a"/><ellipse cx="99" cy="113" rx="3.5" ry="2.6" fill="#7a1a08"/><ellipse cx="121" cy="113" rx="3.5" ry="2.6" fill="#7a1a08"/>' +
-        '<g class="m-eyes"><ellipse cx="88" cy="90" rx="14" ry="16" fill="#fff"/><ellipse cx="132" cy="90" rx="14" ry="16" fill="#fff"/>' +
-          '<g class="m-pupils"><circle cx="90" cy="93" r="8" fill="#1d0b10"/><circle cx="134" cy="93" r="8" fill="#1d0b10"/><circle cx="93" cy="89" r="3" fill="#fff"/><circle cx="137" cy="89" r="3" fill="#fff"/></g>' +
-          '<g class="m-lids"><ellipse cx="88" cy="90" rx="15.5" ry="17.5" fill="#e8461f"/><ellipse cx="132" cy="90" rx="15.5" ry="17.5" fill="#e8461f"/></g></g>' +
-        '<g class="m-stars">' + star(88, 90, 15) + star(132, 90, 15) + '</g>' +
-        '<path class="mouth mouth-smile" d="M94 130Q110 142 126 130" fill="none" stroke="#7a1a08" stroke-width="4" stroke-linecap="round"/>' +
-        '<g class="mouth mouth-open"><path d="M92 126Q110 156 128 126Z" fill="#5a0f05"/><path d="M98 127l3 7 3-7ZM116 127l3 7 3-7Z" fill="#fff"/></g>' +
-        '<ellipse class="mouth mouth-o" cx="110" cy="134" rx="7" ry="8" fill="#5a0f05"/>' +
-        '<path class="mouth mouth-sad" d="M96 138Q110 128 124 138" fill="none" stroke="#7a1a08" stroke-width="4" stroke-linecap="round"/>' +
-        '<g class="em-flame"><path d="M110 134C92 152 80 182 92 222C98 204 106 194 110 180C114 194 122 204 128 222C140 182 128 152 110 134Z" fill="url(#emFlame)"/>' +
-          '<path d="M110 146C102 160 98 176 104 196C106 186 108 180 110 174C112 180 114 186 116 196C122 176 118 160 110 146Z" fill="#fffbe0" opacity="0.9"/></g>' +
-      '</g>' +
+      // far wing, behind the neck
+      '<g class="em-wing-r"><path d="M114 116C106 92 100 72 96 56C92 44 90 34 88 24C72 16 50 10 30 8C38 20 42 32 40 46C52 46 62 54 66 66C76 64 86 72 92 84C102 84 110 96 114 116Z" fill="url(#dgWingFar)" stroke="#1e0206" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M88 24L32 9M88 24L41 45M90 30L67 65M96 58L92 83" stroke="#3a0408" stroke-width="2.2" stroke-linecap="round" fill="none"/></g>' +
+      // near wing
+      '<g class="em-wing-l">' +
+        '<path d="M102 126C92 104 84 84 78 70C72 58 68 50 64 42C48 36 26 32 6 34C16 44 20 56 18 70C30 70 40 78 44 90C54 88 64 94 70 106C80 104 92 110 102 126Z" fill="url(#dgWing)" stroke="#2a0408" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M64 42L8 35M64 42L19 69M66 46L45 89M80 76L70 105" stroke="#4a060c" stroke-width="2.6" stroke-linecap="round" fill="none"/>' +
+        '<path d="M60 44C46 46 34 52 26 62M58 58C52 66 50 76 50 86" stroke="#ff8a5a" stroke-width="1" opacity="0.35" fill="none"/>' +
+        '<path d="M102 126C92 104 84 84 78 70C72 58 68 50 64 42" stroke="url(#dgBody)" stroke-width="7" stroke-linecap="round" fill="none"/>' +
+        '<path d="M100 120C92 102 85 86 79 72" stroke="#ff9a6a" stroke-width="1.6" stroke-linecap="round" opacity="0.6" fill="none"/>' +
+        '<path d="M64 42L58 32L68 38Z" fill="url(#dgHorn)"/></g>' +
+      // hind leg
+      '<g class="m-legs"><ellipse cx="76" cy="196" rx="31" ry="27" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2"/>' +
+        '<ellipse cx="76" cy="196" rx="31" ry="27" fill="url(#dgScales)" opacity="0.55"/>' +
+        '<path d="M56 182C64 172 80 170 92 176" stroke="#ff8a5a" stroke-width="2" opacity="0.45" fill="none" stroke-linecap="round"/>' +
+        '<path d="M50 228C56 218 82 216 96 222L106 226L98 229L103 234L90 233C78 237 58 237 50 231Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M106 226L113 228L105 231ZM103 234L110 237L101 237Z" fill="url(#dgHorn)"/></g>' +
+      // torso with belly plates
+      '<g class="m-torso"><path d="M48 196C42 162 64 130 100 124C122 120 136 136 134 162C132 188 118 214 92 220C70 224 54 214 48 196Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2"/>' +
+        '<path d="M48 196C42 162 64 130 100 124C122 120 136 136 134 162C132 188 118 214 92 220C70 224 54 214 48 196Z" fill="url(#dgScales)" opacity="0.5"/>' +
+        '<path d="M118 132C134 144 132 178 122 198C116 210 106 216 96 218C106 202 112 182 112 160C112 148 113 138 118 132Z" fill="url(#dgBelly)" stroke="#6a3408" stroke-width="1.4"/>' +
+        '<path d="M116 146L130 148M115 160L132 162M114 174L130 178M110 188L126 192M104 202L118 206" stroke="#7a4210" stroke-width="1.3" opacity="0.75"/>' +
+        '<path d="M60 150C70 136 84 128 100 126" stroke="#ffb08a" stroke-width="2.4" opacity="0.5" fill="none" stroke-linecap="round"/></g>' +
+      // front leg
+      '<path d="M106 158C126 164 135 190 132 214L144 222L138 227L144 232L119 232C110 230 108 222 110 214C112 200 104 184 98 172Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2" stroke-linejoin="round"/>' +
+      '<path d="M108 162C124 168 131 188 130 206" stroke="#ff8a5a" stroke-width="2" opacity="0.5" fill="none" stroke-linecap="round"/>' +
+      '<path d="M144 222L151 224L143 227ZM144 232L151 234L142 234Z" fill="url(#dgHorn)"/>' +
+      // tail wrapped around the feet
+      '<g class="em-tail"><path d="M54 200C58 226 94 236 128 232C148 230 166 226 180 216L194 207L189 223L199 231L182 228C168 238 146 242 128 242C92 244 52 232 46 206Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M60 220C80 232 110 236 140 232" stroke="#ff8a5a" stroke-width="2" opacity="0.45" fill="none" stroke-linecap="round"/>' +
+        '<path d="M194 207L189 223L199 231L184 226Z" fill="url(#dgHorn)" opacity="0.85"/></g>' +
+      // neck, spines and throat plates
+      '<path d="M98 132C102 106 118 84 142 72L162 84C148 92 136 106 130 124C128 138 122 150 112 156Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2"/>' +
+      '<path d="M98 132C102 106 118 84 142 72L162 84C148 92 136 106 130 124C128 138 122 150 112 156Z" fill="url(#dgScales)" opacity="0.5"/>' +
+      '<path d="M142 75C150 79 156 83 161 86C147 96 137 110 131 128C129 140 125 148 120 152C124 136 126 118 134 100C138 90 141 82 142 75Z" fill="url(#dgBelly)" stroke="#6a3408" stroke-width="1.2"/>' +
+      '<path d="M100 120L92 112L104 112ZM106 104L98 94L110 97ZM115 91L110 80L121 85ZM126 81L124 70L133 77ZM90 138L80 134L92 130Z" fill="url(#dgHorn)" stroke="#5a3a18" stroke-width="0.8" stroke-linejoin="round"/>' +
+      '<g class="m-head"><g transform="translate(140 80) scale(1.28) translate(-140 -80)">' +
+        // horns and frills behind the skull
+        '<path d="M142 56C130 46 116 42 100 44C114 48 124 54 132 64Z" fill="url(#dgHorn)" stroke="#5a3a18" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<path d="M134 80L114 84L130 90ZM138 88L120 100L140 96Z" fill="#7a0a12" stroke="#2a0206" stroke-width="1.4" stroke-linejoin="round"/>' +
+        // lower jaw: closed, slightly open, wide open
+        '<g class="mouth mouth-smile"><path d="M138 84C154 87 176 85 199 80C197 87 187 91 173 93C159 95 146 93 138 88Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="1.8"/><path d="M174 84L177 90L180 84Z" fill="#fff6dc"/></g>' +
+        '<g class="mouth mouth-sad"><path d="M138 84C154 89 176 89 197 84C195 90 186 94 173 95C159 96 146 94 138 88Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="1.8"/></g>' +
+        '<g class="mouth mouth-o"><path d="M146 82C162 84 182 82 198 79C195 88 186 95 172 96C160 96 150 90 146 82Z" fill="url(#dgThroat)"/><path d="M140 86C154 92 172 98 192 98C189 104 178 106 164 103C152 100 143 94 140 88Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="1.8"/></g>' +
+        '<g class="mouth mouth-open"><path d="M144 82C160 84 180 82 199 79C196 94 188 104 176 107C160 105 148 96 144 82Z" fill="url(#dgThroat)"/>' +
+          '<path d="M140 85C150 95 170 106 193 109C189 115 176 117 162 113C150 109 141 99 140 88Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="1.8"/>' +
+          '<path d="M168 106L171 100L174 107ZM178 108L181 102L184 108ZM158 102L161 97L164 104Z" fill="#fff6dc"/></g>' +
+        // skull and upper jaw
+        '<path d="M126 70C130 52 148 44 166 46C180 48 192 56 202 64C209 69 211 75 206 79C196 81 184 81 172 83C160 85 146 87 136 85C129 81 125 77 126 70Z" fill="url(#dgBody)" stroke="#2a0206" stroke-width="2"/>' +
+        '<path d="M126 70C130 52 148 44 166 46C180 48 192 56 202 64C209 69 211 75 206 79C196 81 184 81 172 83C160 85 146 87 136 85C129 81 125 77 126 70Z" fill="url(#dgScales)" opacity="0.45"/>' +
+        '<path d="M140 54C150 47 166 45 180 50C190 54 198 60 204 66" stroke="#ffa070" stroke-width="2.2" opacity="0.55" fill="none" stroke-linecap="round"/>' +
+        '<path d="M164 81L167 87L170 81ZM184 79L187 85L190 79ZM196 78L198 83L201 77Z" fill="#fff6dc"/>' +
+        '<ellipse cx="200" cy="66" rx="3.2" ry="2" fill="#2a0204" transform="rotate(-20 200 66)"/>' +
+        // brow ridge, eye, lid
+        '<path d="M150 56C158 49 172 49 181 56C173 55 165 57 159 61Z" fill="#5a060c"/>' +
+        '<ellipse cx="165" cy="60" rx="12" ry="8" fill="#ff8a1a" opacity="0.35"/>' +
+        '<g class="m-eyes"><path d="M154 61C158 54 170 54 176 60C170 66 159 67 154 61Z" fill="url(#dgEye)" stroke="#2a0204" stroke-width="0.8"/>' +
+          '<g class="m-pupils"><path d="M164.5 56.5C166 59 166 62 164.5 64.5C163 62 163 59 164.5 56.5Z" fill="#140000"/><circle cx="161" cy="59" r="1.3" fill="#fff"/></g>' +
+          '<g class="m-lids"><ellipse cx="164.5" cy="60" rx="10" ry="6" fill="#8a1012"/></g></g>' +
+        '<g class="m-stars">' + star(164, 60, 11) + '</g>' +
+        // main horn, over the skull
+        '<path d="M150 50C140 34 124 24 104 18C120 30 132 44 140 58Z" fill="url(#dgHorn)" stroke="#5a3a18" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<path d="M140 44L134 48M132 36L127 41M122 29L118 33" stroke="#8a6a40" stroke-width="1.2" stroke-linecap="round"/>' +
+        '<path d="M182 54L188 46L190 56Z" fill="url(#dgHorn)" stroke="#5a3a18" stroke-width="0.8"/>' +
+        '<g class="em-flame"><ellipse class="em-mouth" cx="203" cy="86" rx="13" ry="9" fill="url(#emFlame)"/></g>' +
+      '</g></g>' +
     '</g></svg>';
 
   function zibLights() {

@@ -52,8 +52,14 @@ version have separate coins and progress.
 | Machine | Host | Grid | How it pays | Signature feature | Jackpot game | Risk |
 | --- | --- | --- | --- | --- | --- | --- |
 | Neon Fruit Frenzy | DJ Pina, a pineapple in neon shades | 5 × 3 | 20 paylines | Free spins where every win pays ×3 | Jackpot Pick | Low |
-| Dragon's Hoard | Ember, a baby dragon | 5 × 4 | 1,024 ways | Ember breathes Dragon Fire to turn symbols wild; free spins with sticky wilds | Hold & Spin | Medium |
+| Dragon's Hoard | Ember, a crimson dragon | 5 × 4 | 1,024 ways | Ember breathes Dragon Fire to turn symbols wild; free spins with sticky wilds | Hold & Spin | Medium |
 | Cosmic Cascade | Zib, an alien in a flying saucer | 6 × 5 | Clusters of 5+ touching symbols | Winning clusters explode and new symbols fall in; every cascade raises the multiplier (×1 up to ×20), and in free spins it never resets | Rocket Jackpot | High |
+
+**Dragon's Hoard art.** This machine is the first with the richer, more
+realistic style: its symbols are painted in code with metal and gem shading,
+bevels, highlights and texture, Ember is a lit, scaled dragon, and Dragon
+Fire is a real-time fire jet from Ember's mouth (WebGL; without it the
+original fire sweep plays instead).
 
 **Mascots.** Each host sits on top of its machine, idles (bobbing, blinking,
 wings flapping, antennae wobbling) and reacts to what happens: it leans in when
@@ -196,6 +202,8 @@ js/machines.js        the three machines: symbols, weights, paytables, features
 js/progress.js        levels and XP, login streak, missions, timed bonuses, test clock
 js/mascots.js         the three hosts drawn as animated SVG
 js/bonus.js           the jackpot games: Jackpot Pick, Hold & Spin, Rocket Jackpot
+js/art.js             painted symbol art (Dragon's Hoard), drawn once with Canvas 2D
+js/firefx.js          real-time fire jet (WebGL) for Dragon Fire
 js/app.js             game controller: reels, animations, features, rewards, settings, saving
 js/audio.js           synthesized sound effects and music (Web Audio, no files)
 js/fx.js              particle effects (coins, sparks, confetti, fireworks)
