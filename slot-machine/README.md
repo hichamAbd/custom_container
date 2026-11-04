@@ -11,8 +11,29 @@ Coins are for fun only and have no cash value.
 
 ## Play it on your phone
 
-You need Python 3 on your computer (macOS and Linux have it; on Windows get it
-from python.org).
+The easiest way is the hosted version, which needs nothing installed:
+
+**https://hichamabd.github.io/custom_container/slot-machine/**
+
+Open it in your phone's browser, then add it to your home screen so it opens
+full screen with its own icon, like an app:
+
+- **iPhone (Safari):** tap the Share button, then **Add to Home Screen**.
+- **Android (Chrome):** tap the ⋮ menu, then **Add to Home screen** (or
+  **Install app**).
+
+The hosted version is served by GitHub Pages. To turn it on (once), open the
+repository's **Settings > Pages**, choose **Deploy from a branch**, pick the
+branch with the game and the **/ (root)** folder, and save. Every later push
+to that branch updates the game automatically.
+
+On a computer you can also just double-click `index.html`. Space bar spins.
+
+### Without internet hosting: your own Wi-Fi
+
+If you'd rather not host it, your computer can serve it to your phone over
+Wi-Fi. You need Python 3 (macOS and Linux have it; on Windows get it from
+python.org).
 
 1. Open a terminal in this `slot-machine` folder.
 2. Run `python3 serve.py` (on Windows: `py serve.py`).
@@ -23,11 +44,8 @@ from python.org).
 The first time, your computer may ask whether Python can accept network
 connections: allow it on private networks. Press `Ctrl+C` to stop the server.
 
-For a full-screen, app-like experience, use your browser's **Add to Home
-Screen** option once the game is open.
-
-On a computer you can simply open `http://localhost:8080` after starting the
-server. Space bar spins.
+Each address keeps its own saved game, so the hosted version and the Wi-Fi
+version have separate coins and progress.
 
 ## The three machines
 

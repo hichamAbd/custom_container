@@ -1,7 +1,7 @@
 {
   "name": "Reel Riot Casino",
   "short_name": "Reel Riot",
-  "description": "Three flashy slot machines with progressive jackpots. Free play, no real money.",
+  "description": "Three flashy slot machines with animated hosts, jackpot games, levels and daily bonuses. Free play, no real money.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
