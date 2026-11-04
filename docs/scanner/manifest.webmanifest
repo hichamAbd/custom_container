@@ -1,0 +1,13 @@
+{
+  "name": "Pocket Scanner",
+  "short_name": "Scanner",
+  "description": "Take a photo of a document, pick its corners, and save a straightened scan.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111318",
+  "theme_color": "#111318",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

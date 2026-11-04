@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Scanner">
+<title>Pocket Scanner</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #111318;
+    --panel: #1b1e26;
+    --panel-2: #262a35;
+    --text: #eef0f4;
+    --muted: #9aa3b5;
+    --accent: #4f8cff;
+    --accent-press: #3a74e0;
+    --danger: #ff6b6b;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 16px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden; overscroll-behavior: none;
+  }
+  .screen { position: fixed; inset: 0; display: flex; flex-direction: column; padding-top: var(--safe-t); }
+  .screen[hidden] { display: none; }
+  header {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    min-height: 56px;
+  }
+  header h1 { font-size: 18px; margin: 0; font-weight: 650; flex: 1; }
+  header p { margin: 0; color: var(--muted); font-size: 14px; }
+  main { flex: 1; min-height: 0; position: relative; }
+  footer {
+    display: flex; gap: 10px; padding: 12px 16px calc(12px + var(--safe-b));
+    background: var(--panel); justify-content: center; flex-wrap: wrap;
+  }
+  button, .btn {
+    appearance: none; border: 0; border-radius: 12px; cursor: pointer;
+    font: inherit; font-weight: 600; color: var(--text); background: var(--panel-2);
+    padding: 12px 18px; min-height: 48px; display: inline-flex; align-items: center;
+    justify-content: center; gap: 8px; user-select: none; white-space: nowrap;
+  }
+  button:active, .btn:active { transform: scale(.97); }
+  button.primary, .btn.primary { background: var(--accent); color: #fff; }
+  button.primary:active { background: var(--accent-press); }
+  button.ghost { background: transparent; color: var(--muted); padding: 8px 10px; min-height: 40px; }
+  button:disabled { opacity: .5; pointer-events: none; }
+  footer button { flex: 1 1 0; max-width: 220px; }
+  svg.i { width: 20px; height: 20px; flex: none; }
+
+  /* Start screen */
+  #start main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 24px 16px; text-align: center; }
+  #start .hero { width: 120px; height: 120px; }
+  #start h2 { margin: 0; font-size: 26px; }
+  #start .lead { margin: 6px 0 0; color: var(--muted); max-width: 340px; }
+  #start .actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+  #start .actions .btn { width: 100%; min-height: 56px; font-size: 17px; }
+  #start ol { color: var(--muted); text-align: left; font-size: 14px; max-width: 320px; margin: 0; padding-left: 20px; }
+  input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  /* Corner editor */
+  #stage { position: absolute; inset: 0; touch-action: none; }
+  #editCanvas { display: block; touch-action: none; }
+  #loupe {
+    position: absolute; top: 12px; left: 12px; width: 132px; height: 132px; border-radius: 50%;
+    border: 3px solid #fff; box-shadow: 0 6px 20px rgba(0,0,0,.5); pointer-events: none; background: #000;
+  }
+  #loupe[hidden] { display: none; }
+  #loupe.right { left: auto; right: 12px; }
+  .hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    background: rgba(0,0,0,.6); color: #fff; font-size: 13px; padding: 6px 12px; border-radius: 999px;
+    pointer-events: none; white-space: nowrap; }
+  .ratio { display: flex; gap: 6px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 16px 12px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; min-height: 36px; padding: 6px 14px; border-radius: 999px; font-size: 14px; background: var(--panel-2); color: var(--muted); }
+  .chip[aria-pressed=true] { background: var(--text); color: var(--bg); }
+
+  /* Result */
+  #result main { display: flex; align-items: center; justify-content: center; padding: 8px 16px; }
+  #preview { max-width: 100%; max-height: 100%; box-shadow: 0 10px 30px rgba(0,0,0,.5); background: #fff; }
+  .save-note { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 8px; min-height: 1em; margin: 0; }
+
+  /* Busy + toast */
+  #busy { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; z-index: 10; }
+  #busy[hidden] { display: none; }
+  .spinner { width: 44px; height: 44px; border-radius: 50%; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #toast { position: fixed; left: 50%; bottom: calc(100px + var(--safe-b)); transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 600;
+    opacity: 0; transition: .2s; pointer-events: none; z-index: 11; max-width: calc(100% - 32px); text-align: center; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Inline icon sprites -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M4.5 15a8 8 0 1 0 1.9-8.3L4 10"/></symbol>
+</svg>
+
+<!-- 1. Start -->
+<section class="screen" id="start">
+  <main>
+    <img class="hero" src="icon.svg" alt="">
+    <div>
+      <h2>Pocket Scanner</h2>
+      <p class="lead">Snap a document, drag the four corners onto its edges, and save a flat, straight scan to your photos.</p>
+    </div>
+    <div class="actions">
+      <label class="btn primary" for="cameraInput"><svg class="i"><use href="#i-camera"/></svg>Take a photo</label>
+      <label class="btn" for="libraryInput"><svg class="i"><use href="#i-image"/></svg>Choose from gallery</label>
+    </div>
+    <ol>
+      <li>Lay the page on a contrasting surface.</li>
+      <li>Drag each blue circle to a corner of the page.</li>
+      <li>Pick a look, then save.</li>
+    </ol>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment">
+    <input type="file" id="libraryInput" accept="image/*">
+  </main>
+</section>
+
+<!-- 2. Corner editor -->
+<section class="screen" id="adjust" hidden>
+  <header>
+    <button class="ghost" id="adjBack" aria-label="Back"><svg class="i"><use href="#i-back"/></svg></button>
+    <h1>Set the corners</h1>
+    <button class="ghost" id="adjReset"><svg class="i"><use href="#i-reset"/></svg>Reset</button>
+  </header>
+  <main>
+    <div id="stage">
+      <canvas id="editCanvas"></canvas>
+      <canvas id="loupe" hidden></canvas>
+      <div class="hint" id="adjHint">Drag the circles onto the page corners</div>
+    </div>
+  </main>
+  <div class="chips" id="ratioChips" role="group" aria-label="Page shape" style="padding-top:12px;background:var(--panel)">
+    <button class="chip" data-ratio="auto" aria-pressed="true">Auto shape</button>
+    <button class="chip" data-ratio="a4" aria-pressed="false">A4</button>
+    <button class="chip" data-ratio="letter" aria-pressed="false">US Letter</button>
+    <button class="chip" data-ratio="card" aria-pressed="false">ID / card</button>
+    <button class="chip" data-ratio="square" aria-pressed="false">Square</button>
+  </div>
+  <footer style="padding-top:0">
+    <button class="primary" id="doScan"><svg class="i"><use href="#i-check"/></svg>Straighten</button>
+  </footer>
+</section>
+
+<!-- 3. Result -->
+<section class="screen" id="result" hidden>
+  <header>
+    <button class="ghost" id="resBack" aria-label="Adjust corners"><svg class="i"><use href="#i-back"/></svg></button>
+    <h1>Your scan</h1>
+    <button class="ghost" id="rotate" aria-label="Rotate"><svg class="i"><use href="#i-rotate"/></svg>Rotate</button>
+  </header>
+  <main><canvas id="preview"></canvas></main>
+  <div class="chips" id="filterChips" role="group" aria-label="Look">
+    <button class="chip" data-filter="original" aria-pressed="false">Original</button>
+    <button class="chip" data-filter="magic" aria-pressed="true">Magic color</button>
+    <button class="chip" data-filter="gray" aria-pressed="false">Grayscale</button>
+    <button class="chip" data-filter="bw" aria-pressed="false">Black &amp; white</button>
+  </div>
+  <p class="save-note" id="saveNote"></p>
+  <footer>
+    <button id="newScan"><svg class="i"><use href="#i-camera"/></svg>New</button>
+    <button class="primary" id="save"><svg class="i"><use href="#i-save"/></svg>Save to gallery</button>
+  </footer>
+</section>
+
+<div id="busy" hidden><div class="spinner" role="status" aria-label="Working"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+
+const MAX_SRC = 4000;     // longest side kept from the photo
+const MAX_OUT = 3500;     // longest side of the saved scan
+const VIEW_MAX = 1600;    // longest side of the on-screen preview copy
+const RATIOS = { a4: Math.SQRT2, letter: 11 / 8.5, card: 85.6 / 53.98, square: 1 };
+
+const state = {
+  src: null,        // full-res canvas of the photo
+  srcData: null,    // its ImageData (lazy)
+  view: null,       // downscaled canvas for drawing the editor
+  corners: null,    // 4 points [x,y] in source pixels
+  ratio: "auto",
+  base: null,       // straightened ImageData
+  filtered: {},     // cache: filter name -> ImageData
+  filter: "magic",
+  rotation: 0,      // quarter turns clockwise
+  out: null,        // final canvas (filter + rotation)
+  blob: null,       // JPEG of `out`, prepared ahead so sharing stays inside the tap
+};
+
+/* ---------- Helpers ---------- */
+function showScreen(id) {
+  for (const s of document.querySelectorAll(".screen")) s.hidden = s.id !== id;
+  if (id === "adjust") requestAnimationFrame(layoutEditor);
+}
+let toastTimer;
+function toast(msg, ms = 2400) {
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), ms);
+}
+function busy(on) { $("#busy").hidden = !on; }
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+/* ---------- 1. Load photo ---------- */
+async function loadFile(file) {
+  if (!file) return;
+  busy(true);
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => {
+      const i = new Image();
+      i.onload = () => res(i);
+      i.onerror = () => rej(new Error("This image format can't be opened here."));
+      i.src = url;
+    });
+    // Browsers apply the photo's EXIF rotation when drawing it.
+    const k = Math.min(1, MAX_SRC / Math.max(img.naturalWidth, img.naturalHeight));
+    const w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    c.getContext("2d").drawImage(img, 0, 0, w, h);
+    const kv = Math.min(1, VIEW_MAX / Math.max(w, h));
+    const v = document.createElement("canvas");
+    v.width = Math.round(w * kv); v.height = Math.round(h * kv);
+    v.getContext("2d").drawImage(c, 0, 0, v.width, v.height);
+    Object.assign(state, { src: c, srcData: null, view: v, corners: defaultCorners(w, h) });
+    showScreen("adjust");
+  } catch (e) {
+    toast(e.message || "Could not open the photo.");
+  } finally {
+    URL.revokeObjectURL(url);
+    busy(false);
+  }
+}
+function defaultCorners(w, h) {
+  const mx = w * 0.1, my = h * 0.1;
+  return [[mx, my], [w - mx, my], [w - mx, h - my], [mx, h - my]];
+}
+for (const id of ["#cameraInput", "#libraryInput"]) {
+  $(id).addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = ""; // allow picking the same file again
+    loadFile(f);
+  });
+}
+
+/* ---------- 2. Corner editor ---------- */
+const stage = $("#stage"), ecv = $("#editCanvas"), ectx = ecv.getContext("2d");
+const loupe = $("#loupe"), lctx = loupe.getContext("2d");
+let layout = null, drag = null;
+
+function layoutEditor() {
+  if (!state.src || $("#adjust").hidden) return;
+  const r = stage.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  ecv.width = Math.round(r.width * dpr); ecv.height = Math.round(r.height * dpr);
+  ecv.style.width = r.width + "px"; ecv.style.height = r.height + "px";
+  const pad = 28; // room so corners at the photo edge stay easy to grab
+  const iw = state.src.width, ih = state.src.height;
+  const s = Math.min((r.width - 2 * pad) / iw, (r.height - 2 * pad) / ih);
+  layout = { s, ox: (r.width - iw * s) / 2, oy: (r.height - ih * s) / 2, dpr, w: r.width, h: r.height, rect: r };
+  const L = 132;
+  loupe.width = Math.round(L * dpr); loupe.height = Math.round(L * dpr);
+  drawEditor();
+}
+const toScreen = ([x, y]) => [layout.ox + x * layout.s, layout.oy + y * layout.s];
+const toImage = (sx, sy) => [(sx - layout.ox) / layout.s, (sy - layout.oy) / layout.s];
+
+function polyPath(ctx, pts) {
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.closePath();
+}
+
+function drawEditor() {
+  if (!layout) return;
+  const { dpr, s, ox, oy } = layout;
+  const iw = state.src.width * s, ih = state.src.height * s;
+  ectx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ectx.clearRect(0, 0, layout.w, layout.h);
+  ectx.imageSmoothingQuality = "high";
+  ectx.drawImage(state.view, ox, oy, iw, ih);
+  const pts = state.corners.map(toScreen);
+
+  // Dim everything outside the selection.
+  ectx.beginPath();
+  ectx.rect(ox, oy, iw, ih);
+  polyPath(ectx, pts);
+  ectx.fillStyle = "rgba(0,0,0,.5)";
+  ectx.fill("evenodd");
+
+  // Outline (dark halo + accent line, visible on any background).
+  ectx.lineJoin = "round";
+  ectx.beginPath(); polyPath(ectx, pts);
+  ectx.strokeStyle = "rgba(0,0,0,.45)"; ectx.lineWidth = 5; ectx.stroke();
+  ectx.strokeStyle = "#4f8cff"; ectx.lineWidth = 2.5; ectx.stroke();
+
+  pts.forEach((p, i) => {
+    const active = drag && drag.i === i;
+    ectx.beginPath(); ectx.arc(p[0], p[1], active ? 20 : 15, 0, Math.PI * 2);
+    ectx.fillStyle = active ? "rgba(79,140,255,.45)" : "rgba(79,140,255,.28)"; ectx.fill();
+    ectx.lineWidth = 3; ectx.strokeStyle = "#fff"; ectx.stroke();
+    ectx.beginPath(); ectx.arc(p[0], p[1], 3, 0, Math.PI * 2);
+    ectx.fillStyle = "#fff"; ectx.fill();
+  });
+}
+
+function drawLoupe() {
+  if (!drag) { loupe.hidden = true; return; }
+  const L = 132, { dpr } = layout;
+  const [cx, cy] = state.corners[drag.i];
+  const sp = toScreen([cx, cy]);
+  // Keep the magnifier away from the finger.
+  loupe.classList.toggle("right", sp[0] < 170 && sp[1] < 190);
+  loupe.hidden = false;
+  const z = Math.max(layout.s * 3, 0.6); // screen px per source px
+  lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  lctx.fillStyle = "#000"; lctx.fillRect(0, 0, L, L);
+  lctx.save();
+  lctx.translate(L / 2, L / 2); lctx.scale(z, z); lctx.translate(-cx, -cy);
+  lctx.imageSmoothingQuality = "high";
+  lctx.drawImage(state.src, 0, 0);
+  lctx.beginPath(); polyPath(lctx, state.corners);
+  lctx.strokeStyle = "#4f8cff"; lctx.lineWidth = 2 / z; lctx.stroke();
+  lctx.restore();
+  // Crosshair
+  lctx.strokeStyle = "#fff"; lctx.lineWidth = 1.5;
+  lctx.beginPath();
+  lctx.moveTo(L / 2 - 12, L / 2); lctx.lineTo(L / 2 - 4, L / 2);
+  lctx.moveTo(L / 2 + 4, L / 2); lctx.lineTo(L / 2 + 12, L / 2);
+  lctx.moveTo(L / 2, L / 2 - 12); lctx.lineTo(L / 2, L / 2 - 4);
+  lctx.moveTo(L / 2, L / 2 + 4); lctx.lineTo(L / 2, L / 2 + 12);
+  lctx.stroke();
+}
+
+function localXY(e) {
+  const r = ecv.getBoundingClientRect();
+  return [e.clientX - r.left, e.clientY - r.top];
+}
+ecv.addEventListener("pointerdown", (e) => {
+  if (!layout || drag) return;
+  const [sx, sy] = localXY(e);
+  const pts = state.corners.map(toScreen);
+  let best = -1, bd = e.pointerType === "mouse" ? 30 : 56;
+  pts.forEach((p, i) => { const d = Math.hypot(p[0] - sx, p[1] - sy); if (d < bd) { bd = d; best = i; } });
+  if (best < 0) return;
+  e.preventDefault();
+  ecv.setPointerCapture(e.pointerId);
+  // Move relative to where the finger landed, so the point never jumps under it.
+  drag = { i: best, id: e.pointerId, dx: pts[best][0] - sx, dy: pts[best][1] - sy };
+  $("#adjHint").hidden = true;
+  drawEditor(); drawLoupe();
+});
+ecv.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const [sx, sy] = localXY(e);
+  const [x, y] = toImage(sx + drag.dx, sy + drag.dy);
+  state.corners[drag.i] = [clamp(x, 0, state.src.width), clamp(y, 0, state.src.height)];
+  drawEditor(); drawLoupe();
+});
+function endDrag(e) {
+  if (!drag || e.pointerId !== drag.id) return;
+  drag = null; drawEditor(); drawLoupe();
+}
+ecv.addEventListener("pointerup", endDrag);
+ecv.addEventListener("pointercancel", endDrag);
+window.addEventListener("resize", () => requestAnimationFrame(layoutEditor));
+
+$("#adjReset").onclick = () => { state.corners = defaultCorners(state.src.width, state.src.height); drawEditor(); };
+$("#adjBack").onclick = () => showScreen("start");
+$("#ratioChips").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-ratio]"); if (!b) return;
+  state.ratio = b.dataset.ratio;
+  for (const c of $("#ratioChips").children) c.setAttribute("aria-pressed", c === b);
+});
+
+/* ---------- Geometry: straighten ---------- */
+
+// Put the 4 points in order: top-left, top-right, bottom-right, bottom-left.
+function orderCorners(pts) {
+  const cx = pts.reduce((a, p) => a + p[0], 0) / 4, cy = pts.reduce((a, p) => a + p[1], 0) / 4;
+  const sorted = [...pts].sort((a, b) => Math.atan2(a[1] - cy, a[0] - cx) - Math.atan2(b[1] - cy, b[0] - cx));
+  let start = 0;
+  sorted.forEach((p, i) => { if (p[0] + p[1] < sorted[start][0] + sorted[start][1]) start = i; });
+  return sorted.slice(start).concat(sorted.slice(0, start)).map((p) => [p[0], p[1]]);
+}
+
+function isConvex(q) {
+  let sign = 0;
+  for (let i = 0; i < 4; i++) {
+    const a = q[i], b = q[(i + 1) % 4], c = q[(i + 2) % 4];
+    const z = (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
+    if (Math.abs(z) < 1e-6) return false;
+    if (!sign) sign = Math.sign(z); else if (Math.sign(z) !== sign) return false;
+  }
+  return true;
+}
+
+// Projective map from the unit square to quad q (Heckbert's closed form).
+function squareToQuad(q) {
+  const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q;
+  const dx1 = x1 - x2, dx2 = x3 - x2, dx3 = x0 - x1 + x2 - x3;
+  const dy1 = y1 - y2, dy2 = y3 - y2, dy3 = y0 - y1 + y2 - y3;
+  const det = dx1 * dy2 - dx2 * dy1;
+  const g = (dx3 * dy2 - dx2 * dy3) / det;
+  const h = (dx1 * dy3 - dx3 * dy1) / det;
+  return {
+    a: x1 - x0 + g * x1, b: x3 - x0 + h * x3, c: x0,
+    d: y1 - y0 + g * y1, e: y3 - y0 + h * y3, f: y0, g, h,
+  };
+}
+
+function outputSize(q) {
+  let W = Math.max(dist(q[0], q[1]), dist(q[3], q[2]));
+  let H = Math.max(dist(q[0], q[3]), dist(q[1], q[2]));
+  const r = RATIOS[state.ratio];
+  if (r) {
+    const long = Math.max(W, H);
+    if (H >= W) { H = long; W = long / r; } else { W = long; H = long / r; }
+  }
+  const k = Math.min(1, MAX_OUT / Math.max(W, H));
+  return [Math.max(1, Math.round(W * k)), Math.max(1, Math.round(H * k))];
+}
+
+function warp(q, W, H) {
+  if (!state.srcData) state.srcData = state.src.getContext("2d").getImageData(0, 0, state.src.width, state.src.height);
+  const sw = state.src.width, sh = state.src.height, sd = state.srcData.data;
+  const out = new ImageData(W, H), od = out.data;
+  const { a, b, c, d, e, f, g, h } = squareToQuad(q);
+  const maxX = sw - 1, maxY = sh - 1;
+  let o = 0;
+  for (let y = 0; y < H; y++) {
+    const v = (y + 0.5) / H;
+    for (let x = 0; x < W; x++, o += 4) {
+      const u = (x + 0.5) / W;
+      const den = g * u + h * v + 1;
+      let sx = (a * u + b * v + c) / den - 0.5;
+      let sy = (d * u + e * v + f) / den - 0.5;
+      if (sx < 0) sx = 0; else if (sx > maxX) sx = maxX;
+      if (sy < 0) sy = 0; else if (sy > maxY) sy = maxY;
+      const x0 = sx | 0, y0 = sy | 0;
+      const fx = sx - x0, fy = sy - y0;
+      const x1 = x0 < maxX ? x0 + 1 : x0, y1 = y0 < maxY ? y0 + 1 : y0;
+      const i00 = (y0 * sw + x0) * 4, i10 = (y0 * sw + x1) * 4;
+      const i01 = (y1 * sw + x0) * 4, i11 = (y1 * sw + x1) * 4;
+      for (let k = 0; k < 3; k++) {
+        const t = sd[i00 + k] + (sd[i10 + k] - sd[i00 + k]) * fx;
+        const btm = sd[i01 + k] + (sd[i11 + k] - sd[i01 + k]) * fx;
+        od[o + k] = t + (btm - t) * fy;
+      }
+      od[o + 3] = 255;
+    }
+  }
+  return out;
+}
+
+/* ---------- Filters ---------- */
+
+// Estimate the paper brightness at every pixel (removes shadows and uneven light).
+function paperBackground(gray, w, h) {
+  const f = Math.max(1, Math.ceil(Math.max(w, h) / 500));
+  const sw = Math.ceil(w / f), sh = Math.ceil(h / f);
+  let small = new Float32Array(sw * sh);
+  for (let y = 0; y < sh; y++) for (let x = 0; x < sw; x++) {
+    let sum = 0, n = 0;
+    const yEnd = Math.min(h, (y + 1) * f), xEnd = Math.min(w, (x + 1) * f);
+    for (let yy = y * f; yy < yEnd; yy++) for (let xx = x * f; xx < xEnd; xx++) { sum += gray[yy * w + xx]; n++; }
+    small[y * sw + x] = sum / n;
+  }
+  const rMax = Math.max(2, Math.round(Math.max(sw, sh) / 90));   // wipe out text strokes
+  small = filter1D(small, sw, sh, rMax, true, Math.max);
+  small = filter1D(small, sw, sh, rMax, false, Math.max);
+  const rBlur = Math.max(3, Math.round(Math.max(sw, sh) / 40)); // smooth into a lighting map
+  for (let pass = 0; pass < 2; pass++) {
+    small = boxBlur(small, sw, sh, rBlur, true);
+    small = boxBlur(small, sw, sh, rBlur, false);
+  }
+  return { small, sw, sh, f };
+}
+function filter1D(src, w, h, r, horiz, op) {
+  const out = new Float32Array(src.length);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let m = -Infinity;
+    for (let k = -r; k <= r; k++) {
+      const xx = horiz ? clamp(x + k, 0, w - 1) : x, yy = horiz ? y : clamp(y + k, 0, h - 1);
+      m = op(m, src[yy * w + xx]);
+    }
+    out[y * w + x] = m;
+  }
+  return out;
+}
+function boxBlur(src, w, h, r, horiz) {
+  const out = new Float32Array(src.length);
+  const len = horiz ? w : h, lines = horiz ? h : w;
+  for (let l = 0; l < lines; l++) {
+    const idx = (i) => (horiz ? l * w + clamp(i, 0, w - 1) : clamp(i, 0, h - 1) * w + l);
+    let sum = 0;
+    for (let k = -r; k <= r; k++) sum += src[idx(k)];
+    for (let i = 0; i < len; i++) {
+      out[horiz ? l * w + i : i * w + l] = sum / (2 * r + 1);
+      sum += src[idx(i + r + 1)] - src[idx(i - r)];
+    }
+  }
+  return out;
+}
+
+function applyFilter(img, mode) {
+  if (mode === "original") return img;
+  const { width: w, height: h, data: d } = img, n = w * h;
+  const gray = new Float32Array(n);
+  for (let i = 0, j = 0; i < n; i++, j += 4) gray[i] = 0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2];
+  const { small, sw, sh, f } = paperBackground(gray, w, h);
+  const out = new ImageData(w, h), od = out.data;
+  for (let y = 0; y < h; y++) {
+    const gy = clamp((y + 0.5) / f - 0.5, 0, sh - 1), y0 = gy | 0, y1 = Math.min(y0 + 1, sh - 1), fy = gy - y0;
+    for (let x = 0; x < w; x++) {
+      const gx = clamp((x + 0.5) / f - 0.5, 0, sw - 1), x0 = gx | 0, x1 = Math.min(x0 + 1, sw - 1), fx = gx - x0;
+      const top = small[y0 * sw + x0] + (small[y0 * sw + x1] - small[y0 * sw + x0]) * fx;
+      const bot = small[y1 * sw + x0] + (small[y1 * sw + x1] - small[y1 * sw + x0]) * fx;
+      const bg = Math.max(24, top + (bot - top) * fy);
+      const i = y * w + x, j = i * 4;
+      const norm = gray[i] / bg; // ~1 on paper, lower on ink
+      if (mode === "magic") {
+        const s = 255 / (bg * 0.92);
+        for (let k = 0; k < 3; k++) {
+          const v = d[j + k] * s;              // flatten lighting, whiten paper
+          od[j + k] = clamp((v - 40) * 1.2, 0, 255); // add contrast
+        }
+      } else if (mode === "gray") {
+        let t = clamp((norm - 0.35) / 0.55, 0, 1);
+        t = t * t * (3 - 2 * t);
+        od[j] = od[j + 1] = od[j + 2] = 255 * t;
+      } else { // bw
+        od[j] = od[j + 1] = od[j + 2] = norm < 0.78 ? 0 : 255;
+      }
+      od[j + 3] = 255;
+    }
+  }
+  return out;
+}
+
+/* ---------- 3. Result ---------- */
+async function doScan() {
+  const q = orderCorners(state.corners);
+  if (!isConvex(q)) { toast("The corners cross over. Drag them onto the 4 page corners."); return; }
+  state.corners = q;
+  busy(true);
+  await nextFrame();
+  try {
+    const [W, H] = outputSize(q);
+    state.base = warp(q, W, H);
+    state.filtered = {};
+    state.rotation = 0;
+    await render();
+    showScreen("result");
+  } catch (e) {
+    console.error(e);
+    toast("Something went wrong while straightening.");
+  } finally {
+    busy(false);
+  }
+}
+$("#doScan").onclick = doScan;
+
+async function render() {
+  state.blob = null;
+  $("#save").disabled = true;
+  if (!state.filtered[state.filter]) state.filtered[state.filter] = applyFilter(state.base, state.filter);
+  const img = state.filtered[state.filter];
+  const tmp = document.createElement("canvas");
+  tmp.width = img.width; tmp.height = img.height;
+  tmp.getContext("2d").putImageData(img, 0, 0);
+  const rot = ((state.rotation % 4) + 4) % 4;
+  const out = $("#preview");
+  out.width = rot % 2 ? img.height : img.width;
+  out.height = rot % 2 ? img.width : img.height;
+  const ctx = out.getContext("2d");
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.translate(out.width / 2, out.height / 2);
+  ctx.rotate(rot * Math.PI / 2);
+  ctx.drawImage(tmp, -img.width / 2, -img.height / 2);
+  state.out = out;
+  state.blob = await new Promise((r) => out.toBlob(r, "image/jpeg", 0.92));
+  $("#save").disabled = !state.blob;
+}
+
+$("#filterChips").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-filter]"); if (!b || b.dataset.filter === state.filter) return;
+  state.filter = b.dataset.filter;
+  state.blob = null; $("#save").disabled = true;
+  for (const c of $("#filterChips").children) c.setAttribute("aria-pressed", c === b);
+  busy(true); await nextFrame();
+  try { await render(); } finally { busy(false); }
+});
+$("#rotate").onclick = async () => { state.rotation++; state.blob = null; $("#save").disabled = true; busy(true); await nextFrame(); try { await render(); } finally { busy(false); } };
+$("#resBack").onclick = () => showScreen("adjust");
+$("#newScan").onclick = () => showScreen("start");
+
+function fileName() {
+  const t = new Date(), p = (n) => String(n).padStart(2, "0");
+  return `scan-${t.getFullYear()}${p(t.getMonth() + 1)}${p(t.getDate())}-${p(t.getHours())}${p(t.getMinutes())}${p(t.getSeconds())}.jpg`;
+}
+function download(blob, name) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+const isTouch = matchMedia("(pointer: coarse)").matches;
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+$("#save").onclick = async () => {
+  if (!state.blob) return;
+  const name = fileName();
+  const file = new File([state.blob], name, { type: "image/jpeg" });
+  // On phones, the share sheet is the way to put an image in the photo gallery.
+  if (isTouch && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file] });
+      toast("Done");
+      return;
+    } catch (e) {
+      if (e.name === "AbortError") return;
+    }
+  }
+  download(state.blob, name);
+  toast(isTouch ? "Saved to Downloads" : "Downloaded " + name);
+};
+$("#saveNote").textContent = isIOS
+  ? "Tip: in the share sheet, tap “Save Image” to put it in Photos."
+  : "";
+</script>
+</body>
+</html>
