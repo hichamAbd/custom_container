@@ -1,0 +1,2 @@
+rootProject.name = 'reel-riot-vegas'
+include 'core', 'desktop', 'android'
