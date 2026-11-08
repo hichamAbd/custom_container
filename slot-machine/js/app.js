@@ -1567,6 +1567,9 @@
     FX.fountain(dur / 1000 * 0.85, REDUCED ? 6 : 26);
     FX.coinShower(dur / 1000, REDUCED ? 4 : 14);
     if (opts.fireworks) FX.fireworks(opts.fireworks);
+    const storm = window.SlotThree && !REDUCED && window.SlotThree.available()
+      ? window.SlotThree.coinStorm(dur / 1000, final ? { big: 0.3, mega: 0.55, epic: 0.8, legendary: 1 }[final.id] : 0.8)
+      : null;
     let lastClink = 0;
     await tween(dur, function (p) {
       const v = amount * p;
@@ -1594,6 +1597,7 @@
     Sound.coins();
     $('#bw-hint').textContent = 'Tap to continue';
     await waitTap(ov, rt.auto ? 1600 : 6000);
+    if (storm) storm.stop();
     ov.hidden = true;
     $('#bw-mascot').innerHTML = '';
     FX.stop();
@@ -1837,6 +1841,62 @@
 
   /* ----------------------------------------------------- free bonuses */
 
+  // Mega Wheel: three rings. Prizes keep the bonus wheel's odds: the prize is
+  // decided first, and bigger prizes are reached through UPGRADE segments.
+  const MEGA_LAYOUT = [
+    [0, 2, 'up', 4, 0, 1, 2, 'up', 0, 4, 2, 1, 'up', 0, 2, 4],
+    [6, 3, 'up', 6, 3, 6, 'up', 3, 6, 3],
+    [5, 7, 5, 5, 7, 5]
+  ];
+  const MEGA_COLORS = [
+    ['#c8102e', '#5b1fa8', '#1659d6', '#0b8a4a'],
+    ['#7a24c8', '#c8102e', '#0f47b8', '#b8560a'],
+    ['#0b8a4a', '#c8102e', '#5b1fa8']
+  ];
+  function megaRingTier(i) { return i === 5 || i === 7 ? 2 : i === 3 || i === 6 ? 1 : 0; }
+  function shade(hex, k) {
+    const n = parseInt(hex.slice(1), 16);
+    const f = function (c) { return Math.max(0, Math.min(255, Math.round(k > 0 ? c + (255 - c) * k : c * (1 + k)))); };
+    return 'rgb(' + f(n >> 16) + ',' + f((n >> 8) & 255) + ',' + f(n & 255) + ')';
+  }
+  function megaWheel(prizes, idx) {
+    const rings = MEGA_LAYOUT.map(function (row, ri) {
+      let c = 0;
+      return { segs: row.map(function (v) {
+        if (v === 'up') return { label: 'UP\nGRADE', up: true, color: '#e9a400', light: '#fff1b0', dark: '#7a4600' };
+        const col = v === 7 ? '#ffb800' : MEGA_COLORS[ri][c++ % MEGA_COLORS[ri].length];
+        return { label: short(prizes[v].v), prize: v, color: col, light: shade(col, 0.45), dark: shade(col, -0.55) };
+      }) };
+    });
+    const tier = megaRingTier(idx);
+    const pick = function (ri, test) {
+      const hits = [];
+      rings[ri].segs.forEach(function (sg, i) { if (test(sg)) hits.push(i); });
+      return hits[Math.floor(Math.random() * hits.length)];
+    };
+    const path = [];
+    for (let r = 0; r < tier; r++) path.push({ ring: r, idx: pick(r, function (sg) { return sg.up; }) });
+    path.push({ ring: tier, idx: pick(tier, function (sg) { return sg.prize === idx; }) });
+    return window.SlotThree.megaWheel({
+      title: 'Mega Wheel',
+      rings: rings,
+      path: path,
+      turbo: state.settings.turbo,
+      result: short(prizes[idx].v) + ' coins!',
+      onTick: function () { Sound.wheelTick(); },
+      onLand: function (step) { if (step < path.length - 1) { Sound.tierUp(step + 1); buzz(40); } else { Sound.wheelStop(); buzz([30, 40, 60]); } }
+    });
+  }
+
+  // Offline support for the installed app (secure, top-level pages only).
+  function registerOffline() {
+    try {
+      const secure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      if (!secure || !('serviceWorker' in navigator) || window.self !== window.top) return;
+      navigator.serviceWorker.register('sw.js').catch(function () { /* offline mode unavailable */ });
+    } catch (e) { /* offline mode unavailable */ }
+  }
+
   async function bonusWheel() {
     if (rt.busy) return;
     Sound.unlock();
@@ -1859,6 +1919,14 @@
       credit(prize);
       save();
       renderRewardButtons();
+      if (window.SlotThree && window.SlotThree.available()) {
+        const shown = await megaWheel(prizes, idx).then(function () { return true; }, function () { return false; });
+        if (shown) {
+          await rewardScene({ kicker: 'Mega Wheel', amount: prize, sub: 'The wheel is back in ' + clock(P.interval(p, 'wheel')) });
+          showBalance(state.balance, 800);
+          return;
+        }
+      }
       await wheelOverlay({
         title: 'Bonus wheel',
         sub: 'Tap anywhere to spin',
@@ -2565,6 +2633,8 @@
     document.documentElement.style.setProperty('--frame-pad', FRAME_PAD + 'px');
     Mascots.ensureDefs();
     FX.init($('#fx'));
+    if (window.SlotThree) window.SlotThree.preload();
+    registerOffline();
     buildLobby();
     bind();
     applySettings();

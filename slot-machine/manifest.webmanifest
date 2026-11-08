@@ -1,16 +1,25 @@
 {
   "name": "Reel Riot Casino",
   "short_name": "Reel Riot",
-  "description": "Three flashy slot machines with animated hosts, jackpot games, levels and daily bonuses. Free play, no real money.",
+  "id": "./",
+  "description": "Three flashy slot machines with animated hosts, 3D bonus wheels, jackpot games, levels and daily bonuses. Free play, no real money.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "orientation": "any",
   "background_color": "#090414",
   "theme_color": "#090414",
+  "categories": [
+    "games",
+    "entertainment"
+  ],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
   ]
 }

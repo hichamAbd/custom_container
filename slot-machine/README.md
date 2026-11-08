@@ -19,8 +19,10 @@ Open it in your phone's browser, then add it to your home screen so it opens
 full screen with its own icon, like an app:
 
 - **iPhone (Safari):** tap the Share button, then **Add to Home Screen**.
-- **Android (Chrome):** tap the ⋮ menu, then **Add to Home screen** (or
-  **Install app**).
+- **Android (Chrome):** tap the ⋮ menu, then **Install app** (or **Add to
+  Home screen**). It installs like a real app: its own icon in the app
+  drawer, full screen with no browser bars, and it keeps working offline
+  after the first visit.
 
 The hosted version is served by GitHub Pages. To turn it on (once), open the
 repository's **Settings > Pages**, choose **Deploy from a branch**, pick the
@@ -28,6 +30,14 @@ branch with the game and the **/ (root)** folder, and save. Every later push
 to that branch updates the game automatically.
 
 On a computer you can also just double-click `index.html`. Space bar spins.
+
+### 3D effects
+
+Phones and computers with WebGL (any Android phone from the last several
+years, including Android 9 devices) get real 3D: the **Mega Wheel** bonus
+wheel and a storm of tumbling 3D coins over big wins. They use three.js
+(bundled in `js/vendor`, MIT license). Without WebGL the game plays the 2D
+versions instead.
 
 ### Without internet hosting: your own Wi-Fi
 
@@ -95,11 +105,16 @@ grows by 5% for each level above 1.
 | --- | --- | --- |
 | Daily login streak | 300K, 500K, 750K, 1M, 1.5M, 2M, then 4M on day 7 | Once a day. Missing a day restarts at day 1; after day 7 it starts over |
 | Free coins | 200K | Every hour |
-| Bonus wheel | 250K to 10M (usually 250K to 1M) | Every 4 hours |
+| Bonus wheel (Mega Wheel in 3D) | 250K to 10M (usually 250K to 1M) | Every 4 hours |
 | Daily missions | Easy 200K + 150 XP, medium 400K + 300 XP, hard 750K + 500 XP | 3 new missions every day |
 | Mission chest | 1.5M + 1,000 XP | When all 3 missions are claimed |
 | Level-ups | 210K at level 2, 590K at level 5, 1.3M at level 10, 2.7M at level 20 | Every level |
 | Rescue coins | 1M | When you can't afford the smallest bet, at most every 15 minutes |
+
+The bonus wheel is the **Mega Wheel**: three rings, one inside the other.
+The outer ring pays up to 1M; landing on UPGRADE moves the spin to the
+middle ring (1.5M and 2.5M), and another UPGRADE moves it to the center
+(5M and 10M). The prize odds are the same as the 2D wheel's.
 
 Every paid spin earns XP: 10 × the square root of (bet ÷ 1,000), so a 100K
 bet earns 100 XP. Level 2 needs 600 XP and each level needs a little more.
@@ -204,6 +219,9 @@ js/mascots.js         the three hosts drawn as animated SVG
 js/bonus.js           the jackpot games: Jackpot Pick, Hold & Spin, Rocket Jackpot
 js/art.js             painted symbol art (Dragon's Hoard), drawn once with Canvas 2D
 js/firefx.js          real-time fire jet (WebGL) for Dragon Fire
+js/three3d.js         3D effects: the Mega Wheel and the 3D coin storm (three.js)
+js/vendor/            three.js 0.158 and its license
+sw.js                 offline support for the installed app
 js/app.js             game controller: reels, animations, features, rewards, settings, saving
 js/audio.js           synthesized sound effects and music (Web Audio, no files)
 js/fx.js              particle effects (coins, sparks, confetti, fireworks)
